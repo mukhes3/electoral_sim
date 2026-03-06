@@ -1,0 +1,48 @@
+name: "Two-Party Dominant Left"
+description: >
+  An asymmetric electorate where the left cluster is substantially larger
+  (65/35 split). The left party has more candidates and a wider ideological
+  range. Tests whether a dominant party's primary produces nominees closer
+  to the overall median than the minority party's does.
+real_world_analog: "Dominant-party democracies with formal primary processes"
+n_dims: 2
+n_voters: 6000
+dim_names: ["economic (left-right)", "social (libertarian-authoritarian)"]
+
+electorate:
+  type: gaussian_mixture
+  components:
+    - weight: 0.65
+      mean: [0.28, 0.44]
+      cov: [[0.028, 0.006], [0.006, 0.028]]
+    - weight: 0.35
+      mean: [0.72, 0.58]
+      cov: [[0.020, -0.004], [-0.004, 0.020]]
+
+candidates:
+  type: fixed
+  positions:
+    # Left party slate (4 candidates — broader field)
+    - name: "L-Far-Left"
+      position: [0.08, 0.28]
+    - name: "L-Left"
+      position: [0.18, 0.38]
+    - name: "L-Center-Left"
+      position: [0.30, 0.44]
+    - name: "L-Moderate"
+      position: [0.42, 0.50]
+    # Right party slate (3 candidates)
+    - name: "R-Moderate"
+      position: [0.60, 0.52]
+    - name: "R-Right"
+      position: [0.76, 0.60]
+    - name: "R-Far-Right"
+      position: [0.90, 0.74]
+
+parties:
+  left:
+    name: "Left Party"
+    candidate_indices: [0, 1, 2, 3]
+  right:
+    name: "Right Party"
+    candidate_indices: [4, 5, 6]

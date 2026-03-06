@@ -1,0 +1,37 @@
+name: "Polarized Bimodal"
+description: >
+  Two roughly equal-sized voter clusters at opposite ends of the economic axis,
+  with a small centrist group. The median position falls in a low-density gap
+  between the clusters. This is where systems diverge most — the most
+  diagnostically interesting scenario.
+real_world_analog: "Contemporary USA, Brexit-era UK"
+n_dims: 2
+n_voters: 5000
+dim_names: ["economic (left-right)", "social (libertarian-authoritarian)"]
+
+electorate:
+  type: gaussian_mixture
+  components:
+    - weight: 0.46
+      mean: [0.22, 0.42]
+      cov: [[0.025, 0.008], [0.008, 0.025]]
+    - weight: 0.46
+      mean: [0.78, 0.58]
+      cov: [[0.025, -0.008], [-0.008, 0.025]]
+    - weight: 0.08
+      mean: [0.50, 0.48]
+      cov: [[0.015, 0.0], [0.0, 0.015]]
+
+candidates:
+  type: fixed
+  positions:
+    - name: "Far-Left"
+      position: [0.15, 0.35]
+    - name: "Left"
+      position: [0.30, 0.42]
+    - name: "Center"
+      position: [0.50, 0.48]
+    - name: "Right"
+      position: [0.72, 0.58]
+    - name: "Far-Right"
+      position: [0.88, 0.72]

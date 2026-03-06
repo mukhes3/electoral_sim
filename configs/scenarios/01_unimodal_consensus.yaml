@@ -1,0 +1,34 @@
+name: "Unimodal Consensus"
+description: >
+  A single, moderately spread Gaussian centered near the political center.
+  Analog: Nordic countries, Portugal post-transition. Most systems should
+  perform similarly well here — a good sanity check.
+real_world_analog: "Nordic / consensus democracies"
+n_dims: 2
+n_voters: 5000
+dim_names: ["economic (left-right)", "social (libertarian-authoritarian)"]
+
+electorate:
+  type: gaussian_mixture
+  components:
+    - weight: 1.0
+      mean: [0.50, 0.45]
+      cov: [[0.04, 0.01], [0.01, 0.035]]
+
+candidates:
+  type: fixed
+  positions:
+    - name: "Far-Left"
+      position: [0.10, 0.30]
+    - name: "Left"
+      position: [0.28, 0.40]
+    - name: "Center-Left"
+      position: [0.42, 0.45]
+    - name: "Center"
+      position: [0.50, 0.50]
+    - name: "Center-Right"
+      position: [0.62, 0.48]
+    - name: "Right"
+      position: [0.78, 0.55]
+    - name: "Far-Right"
+      position: [0.92, 0.75]

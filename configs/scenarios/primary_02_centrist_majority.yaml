@@ -1,0 +1,49 @@
+name: "Two-Party Asymmetric Centrist Majority"
+description: >
+  A large centrist cluster flanked by two smaller partisan clusters.
+  The majority of voters are moderate, but each party's primary base
+  is more extreme than the general electorate. Tests whether open
+  primaries unlock the centrist majority's influence.
+real_world_analog: "Many European two-bloc systems"
+n_dims: 2
+n_voters: 6000
+dim_names: ["economic (left-right)", "social (libertarian-authoritarian)"]
+
+electorate:
+  type: gaussian_mixture
+  components:
+    - weight: 0.20
+      mean: [0.18, 0.38]
+      cov: [[0.018, 0.004], [0.004, 0.018]]
+    - weight: 0.60
+      mean: [0.50, 0.48]
+      cov: [[0.030, 0.005], [0.005, 0.025]]
+    - weight: 0.20
+      mean: [0.82, 0.60]
+      cov: [[0.018, -0.004], [-0.004, 0.018]]
+
+candidates:
+  type: fixed
+  positions:
+    # Left party slate
+    - name: "L-Progressive"
+      position: [0.10, 0.28]
+    - name: "L-Left"
+      position: [0.22, 0.38]
+    - name: "L-Center-Left"
+      position: [0.38, 0.45]
+    # Right party slate
+    - name: "R-Center-Right"
+      position: [0.62, 0.50]
+    - name: "R-Right"
+      position: [0.78, 0.60]
+    - name: "R-Conservative"
+      position: [0.90, 0.72]
+
+parties:
+  left:
+    name: "Left Party"
+    candidate_indices: [0, 1, 2]
+  right:
+    name: "Right Party"
+    candidate_indices: [3, 4, 5]
