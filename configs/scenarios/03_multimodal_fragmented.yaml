@@ -1,0 +1,48 @@
+name: "Multimodal Fragmented"
+description: >
+  Five distinct voter clusters of unequal size, spread across the preference
+  space. No single cluster dominates. PR systems should excel here;
+  plurality systems are expected to perform poorly.
+real_world_analog: "Netherlands, Israel, Italy (proportional democracies)"
+n_dims: 2
+n_voters: 5000
+dim_names: ["economic (left-right)", "social (libertarian-authoritarian)"]
+
+electorate:
+  type: gaussian_mixture
+  components:
+    - weight: 0.28
+      mean: [0.20, 0.35]
+      cov: [[0.020, 0.005], [0.005, 0.020]]
+    - weight: 0.22
+      mean: [0.42, 0.30]
+      cov: [[0.018, 0.0], [0.0, 0.018]]
+    - weight: 0.20
+      mean: [0.60, 0.50]
+      cov: [[0.020, 0.005], [0.005, 0.020]]
+    - weight: 0.18
+      mean: [0.78, 0.65]
+      cov: [[0.018, 0.004], [0.004, 0.018]]
+    - weight: 0.12
+      mean: [0.50, 0.75]
+      cov: [[0.015, 0.0], [0.0, 0.015]]
+
+candidates:
+  type: fixed
+  positions:
+    - name: "Far-Left"
+      position: [0.12, 0.28]
+    - name: "Left-Libertarian"
+      position: [0.25, 0.22]
+    - name: "Center-Left"
+      position: [0.38, 0.35]
+    - name: "Liberal-Center"
+      position: [0.52, 0.30]
+    - name: "Center-Right"
+      position: [0.65, 0.52]
+    - name: "Christian-Democrat"
+      position: [0.58, 0.62]
+    - name: "Right-Nationalist"
+      position: [0.82, 0.72]
+    - name: "Right-Traditionalist"
+      position: [0.70, 0.85]

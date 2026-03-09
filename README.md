@@ -1,0 +1,140 @@
+# electoral-sim
+
+A spatial voting simulator for comparing electoral systems under real-world-grounded electorate patterns.
+
+Voter and candidate preferences are represented as vectors in `[0,1]^2`. The simulator measures how close each electoral system's outcome is to the **geometric median** of voter preferences — the central tendency most robust to outliers.
+
+
+---
+
+## Implemented Electoral Systems
+
+| System | Family |
+|---|---|
+| Plurality (FPTP) | Winner-take-all |
+| Two-Round Runoff | Winner-take-all |
+| Instant Runoff (IRV/RCV) | Ranked |
+| Borda Count | Ranked/Scoring |
+| Approval Voting | Approval |
+| Score Voting | Scoring |
+| Condorcet (Schulze) | Pairwise |
+| Party-List PR (D'Hondt) | Proportional |
+| Mixed Member Proportional (MMP) | Hybrid |
+| Fractional Ballot (σ = 0.1, 0.3, 1.0) | Hypothetical benchmark |
+
+The **Fractional Ballot** is a hypothetical system included as a theoretical benchmark. It is not currently implemented in any jurisdiction. Each voter's influence is distributed across candidates via a Boltzmann softmax over preference distances; see the paper for details.
+
+## Scenarios
+
+Eight real-world-grounded electorate archetypes (2D: economic × social axes):
+
+| # | Name | Real-world analogue |
+|---|---|---|
+| 1 | Unimodal Consensus | Nordic / consensus democracies |
+| 2 | Polarized Bimodal | Contemporary USA, Brexit-era UK |
+| 3 | Multimodal Fragmented | Netherlands, Israel, Italy |
+| 4 | Dominant Party with Minorities | Japan (LDP), Hungary |
+| 5 | Asymmetric Skewed | Latin American / post-Soviet patterns |
+| 6 | Two-Party Symmetric Polarized | Stylised US two-party system |
+| 7 | Two-Party Asymmetric Centrist Majority | Many European two-bloc systems |
+| 8 | Two-Party Dominant Left | Dominant-party with formal primary process |
+
+## Installation
+
+```bash
+pip install -e ".[dev]"
+```
+
+## Quick Start
+
+```python
+import numpy as np
+from electoral_sim.scenario import load_scenario
+from electoral_sim.ballots import BallotProfile
+from electoral_sim.systems import get_all_systems
+from electoral_sim.metrics import run_simulation
+
+rng = np.random.default_rng(42)
+config, electorate, candidates = load_scenario(
+    "configs/scenarios/02_polarized_bimodal.yaml", rng=rng
+)
+
+systems = get_all_systems(rng=rng)
+metrics = run_simulation(electorate, candidates, systems)
+
+for m in sorted(metrics, key=lambda x: x.distance_to_median):
+    print(f"{m.system_name:35s}  d_median={m.distance_to_median:.4f}"
+          f"  majority_sat={m.majority_satisfaction:.3f}")
+```
+
+## Adding a New System
+
+Subclass `ElectoralSystem` and implement a single `run` method:
+
+```python
+from electoral_sim.systems import ElectoralSystem
+from electoral_sim.types import ElectionResult
+
+class MySystem(ElectoralSystem):
+    name = "My System"
+
+    def run(self, ballots, candidates) -> ElectionResult:
+        # ballots.plurality_votes, ballots.rankings, ballots.scores,
+        # ballots.approvals, ballots.distances are all available
+        winner_idx = ...
+        return self._make_result(winner_idx, candidates)
+```
+
+## Adding a New Scenario
+
+Create a YAML file in `configs/scenarios/`:
+
+```yaml
+name: "My Scenario"
+real_world_analog: "Description"
+n_voters: 5000
+electorate:
+  type: gaussian_mixture
+  components:
+    - weight: 0.6
+      mean: [0.65, 0.55]
+      std:  [0.10, 0.08]
+    - weight: 0.4
+      mean: [0.30, 0.40]
+      std:  [0.10, 0.08]
+candidates:
+  - {label: "Candidate A", position: [0.70, 0.60]}
+  - {label: "Candidate B", position: [0.50, 0.48]}
+  - {label: "Candidate C", position: [0.25, 0.35]}
+```
+
+
+## Running Tests
+
+```bash
+pytest tests/ -v
+```
+
+## Project Structure
+
+```
+electoral_sim/
+├── electorate/     # Voter distribution generation (Gaussian, GMM, uniform)
+├── candidates/     # Candidate positioning in [0,1]^2
+├── ballots/        # BallotProfile: all ballot types from preference vectors
+├── systems/        # 9 standard electoral system implementations
+├── fractional.py   # Fractional Ballot (hypothetical benchmark)
+├── metrics/        # Distance metrics, Monte Carlo runner
+├── primaries/      # Two-party primary pipeline
+├── scenario.py     # YAML scenario loader
+└── types.py        # ElectionResult dataclass
+configs/
+└── scenarios/      # 8 YAML scenario definitions
+notebooks/
+└── 01_electoral_systems_comparison.ipynb  # Reproduces all paper figures
+tests/              # 25 theory-validating unit tests
+```
+
+## Key Assumption
+
+**Sincere voting throughout.** All ballots are derived deterministically from preference distances. Strategic voting is out of scope for v1.

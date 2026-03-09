@@ -1,0 +1,38 @@
+name: "Dominant Party with Minorities"
+description: >
+  One large dominant cluster representing a broad ruling coalition, with two
+  smaller minority clusters at the periphery. Tests whether systems protect
+  minority preferences or simply amplify the majority.
+real_world_analog: "Japan (LDP dominance), Hungary, dominant-party systems"
+n_dims: 2
+n_voters: 5000
+dim_names: ["economic (left-right)", "social (libertarian-authoritarian)"]
+
+electorate:
+  type: gaussian_mixture
+  components:
+    - weight: 0.65
+      mean: [0.62, 0.60]
+      cov: [[0.030, 0.008], [0.008, 0.030]]
+    - weight: 0.20
+      mean: [0.22, 0.32]
+      cov: [[0.018, 0.0], [0.0, 0.018]]
+    - weight: 0.15
+      mean: [0.40, 0.80]
+      cov: [[0.015, 0.0], [0.0, 0.015]]
+
+candidates:
+  type: fixed
+  positions:
+    - name: "Dominant-Center-Right"
+      position: [0.65, 0.62]
+    - name: "Dominant-Coalition"
+      position: [0.55, 0.68]
+    - name: "Moderate-Opposition"
+      position: [0.35, 0.40]
+    - name: "Far-Left"
+      position: [0.15, 0.28]
+    - name: "Left-Libertarian"
+      position: [0.28, 0.22]
+    - name: "Right-Reform"
+      position: [0.72, 0.45]
