@@ -4,7 +4,7 @@ A spatial voting simulator for comparing electoral systems under real-world-grou
 
 Voter and candidate preferences are represented as vectors in `[0,1]^2`. The primary metric the simulator uses to judge how close each electoral system's outcome is to the **geometric median** of voter preferences — the central tendency most robust to outliers, although there are other metrics also available to use. 
 
-The simulation framework as well as some experimental results can be found in the [Arxiv Preprint]([URL](https://arxiv.org/abs/2603.08752)).
+The simulation framework as well as some experimental results can be found in the [Arxiv Preprint](https://arxiv.org/abs/2603.08752).
 
 
 ---
