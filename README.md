@@ -2,7 +2,9 @@
 
 A spatial voting simulator for comparing electoral systems under real-world-grounded electorate patterns.
 
-Voter and candidate preferences are represented as vectors in `[0,1]^2`. The simulator measures how close each electoral system's outcome is to the **geometric median** of voter preferences — the central tendency most robust to outliers.
+Voter and candidate preferences are represented as vectors in `[0,1]^2`. The primary metric the simulator uses to judge how close each electoral system's outcome is to the **geometric median** of voter preferences — the central tendency most robust to outliers, although there are other metrics also available to use. 
+
+The simulation framework as well as some experimental results can be found in the [Arxiv Preprint]([URL](https://arxiv.org/abs/2603.08752)).
 
 
 ---
@@ -138,3 +140,21 @@ tests/              # 25 theory-validating unit tests
 ## Key Assumption
 
 **Sincere voting throughout.** All ballots are derived deterministically from preference distances. Strategic voting is out of scope for v1.
+
+## Citation
+
+If you use this package in your research, please cite:
+```bibtex
+@misc{mukherjee2026electoralsystemssimulatoropen,
+      title={Electoral Systems Simulator: An Open Framework for Comparing Electoral Mechanisms Across Voter Distribution Scenarios}, 
+      author={Sumit Mukherjee},
+      year={2026},
+      eprint={2603.08752},
+      archivePrefix={arXiv},
+      primaryClass={cs.GT},
+      url={https://arxiv.org/abs/2603.08752}, 
+}
+```
+
+
+
