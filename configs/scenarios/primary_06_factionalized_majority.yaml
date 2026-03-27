@@ -1,0 +1,54 @@
+name: "Factionalized Majority Party"
+description: >
+  One large party contains several sizable internal factions spanning from
+  activist to governing wings, while the minority party is smaller and more
+  cohesive. This scenario is designed to stress-test whether the dominant
+  party's primary becomes the decisive arena.
+real_world_analog: "Big-tent dominant parties with contested nominations"
+n_dims: 2
+n_voters: 7000
+dim_names: ["economic (left-right)", "social (libertarian-authoritarian)"]
+
+electorate:
+  type: gaussian_mixture
+  components:
+    - weight: 0.30
+      mean: [0.20, 0.34]
+      cov: [[0.020, 0.004], [0.004, 0.018]]
+    - weight: 0.24
+      mean: [0.30, 0.50]
+      cov: [[0.022, 0.005], [0.005, 0.022]]
+    - weight: 0.16
+      mean: [0.42, 0.60]
+      cov: [[0.018, 0.004], [0.004, 0.018]]
+    - weight: 0.30
+      mean: [0.74, 0.58]
+      cov: [[0.022, -0.004], [-0.004, 0.020]]
+
+candidates:
+  type: fixed
+  positions:
+    - name: "L-Movement"
+      position: [0.10, 0.24]
+    - name: "L-Labor"
+      position: [0.20, 0.38]
+    - name: "L-Center-Left"
+      position: [0.30, 0.48]
+    - name: "L-Governing-Moderate"
+      position: [0.42, 0.56]
+    - name: "L-Technocratic"
+      position: [0.50, 0.66]
+    - name: "R-Moderate"
+      position: [0.62, 0.50]
+    - name: "R-Conservative"
+      position: [0.76, 0.60]
+    - name: "R-Hard-Right"
+      position: [0.90, 0.72]
+
+parties:
+  left:
+    name: "Left Party"
+    candidate_indices: [0, 1, 2, 3, 4]
+  right:
+    name: "Right Party"
+    candidate_indices: [5, 6, 7]

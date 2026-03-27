@@ -2,7 +2,7 @@
 
 A spatial voting simulator for comparing electoral systems under real-world-grounded electorate patterns.
 
-Voter and candidate preferences are represented as vectors in `[0,1]^2`. The primary metric the simulator uses to judge how close each electoral system's outcome is to the **geometric median** of voter preferences — the central tendency most robust to outliers, although there are other metrics also available to use. 
+Voter and candidate preferences are represented as vectors in `[0,1]^N`. The primary metric the simulator uses to judge how close each electoral system's outcome is to the **geometric median** of voter preferences — the central tendency most robust to outliers, although there are other metrics also available to use. 
 
 The simulation framework as well as some experimental results can be found in the [Arxiv Preprint](https://arxiv.org/abs/2603.08752).
 
@@ -28,7 +28,7 @@ The **Fractional Ballot** is a hypothetical system included as a theoretical ben
 
 ## Scenarios
 
-Eight real-world-grounded electorate archetypes (2D: economic × social axes):
+Thirteen real-world-grounded electorate archetypes, including a higher-dimensional primary case:
 
 | # | Name | Real-world analogue |
 |---|---|---|
@@ -40,6 +40,11 @@ Eight real-world-grounded electorate archetypes (2D: economic × social axes):
 | 6 | Two-Party Symmetric Polarized | Stylised US two-party system |
 | 7 | Two-Party Asymmetric Centrist Majority | Many European two-bloc systems |
 | 8 | Two-Party Dominant Left | Dominant-party with formal primary process |
+| 9 | Two-Party High Overlap | Low-polarization or catch-all party systems |
+| 10 | Two-Party Diagonal Cross-Pressures | Coalitions split across economic and cultural axes |
+| 11 | Factionalized Majority Party | Big-tent dominant parties with contested nominations |
+| 12 | Three-Dimensional Primary Competition | Electorates split by economics, culture, and trust in institutions |
+| 13 | Insurgent Outlier Candidate | Primary electorates with a highly energized insurgent wing |
 
 ## Installation
 

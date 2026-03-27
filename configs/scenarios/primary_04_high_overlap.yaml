@@ -1,0 +1,48 @@
+name: "Two-Party High Overlap"
+description: >
+  A broad centrist electorate with heavily overlapping party coalitions.
+  Both parties field candidates near the middle, but with distinct internal
+  factions. Useful for testing weak party sorting, crossover pressure, and
+  whether primary rules can still produce divergent nominees when the
+  electorate itself is not sharply polarized.
+real_world_analog: "Low-polarization or catch-all party systems"
+n_dims: 2
+n_voters: 6000
+dim_names: ["economic (left-right)", "social (libertarian-authoritarian)"]
+
+electorate:
+  type: gaussian_mixture
+  components:
+    - weight: 0.55
+      mean: [0.48, 0.50]
+      cov: [[0.035, 0.004], [0.004, 0.035]]
+    - weight: 0.25
+      mean: [0.34, 0.44]
+      cov: [[0.020, 0.003], [0.003, 0.020]]
+    - weight: 0.20
+      mean: [0.64, 0.56]
+      cov: [[0.020, -0.003], [-0.003, 0.020]]
+
+candidates:
+  type: fixed
+  positions:
+    - name: "L-Redistributive"
+      position: [0.28, 0.42]
+    - name: "L-Center-Left"
+      position: [0.40, 0.48]
+    - name: "L-Civic-Reform"
+      position: [0.46, 0.38]
+    - name: "R-Civic-Moderate"
+      position: [0.54, 0.44]
+    - name: "R-Center-Right"
+      position: [0.62, 0.54]
+    - name: "R-Traditionalist"
+      position: [0.72, 0.62]
+
+parties:
+  left:
+    name: "Left Party"
+    candidate_indices: [0, 1, 2]
+  right:
+    name: "Right Party"
+    candidate_indices: [3, 4, 5]
