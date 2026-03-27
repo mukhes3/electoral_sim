@@ -134,14 +134,32 @@ def run_simulation(
     candidates: CandidateSet,
     systems: list,
     approval_threshold: float | None = None,
+    strategy=None,
+    context=None,
 ) -> list[ElectionMetrics]:
     """
     Run all electoral systems on a single (electorate, candidates) pair
     and return metrics for each.
+
+    Parameters
+    ----------
+    strategy : optional StrategyModel
+        If None, uses the existing sincere-voting baseline.
+    context : optional VotingContext
+        Extra strategic context such as polling information or frontrunners.
     """
     from electoral_sim.ballots import BallotProfile
 
-    ballots = BallotProfile.from_preferences(electorate, candidates, approval_threshold)
+    if strategy is None:
+        ballots = BallotProfile.from_preferences(electorate, candidates, approval_threshold)
+    else:
+        ballots = BallotProfile.from_strategy(
+            electorate,
+            candidates,
+            strategy=strategy,
+            approval_threshold=approval_threshold,
+            context=context,
+        )
     results = []
     for system in systems:
         result = system.run(ballots, candidates)
@@ -156,6 +174,8 @@ def run_monte_carlo(
     n_trials: int = 500,
     rng: np.random.Generator | None = None,
     approval_threshold: float | None = None,
+    strategy=None,
+    context_factory=None,
 ) -> dict[str, list[ElectionMetrics]]:
     """
     Run multiple simulation trials, aggregating metrics per system.
@@ -169,6 +189,12 @@ def run_monte_carlo(
     n_trials : int
     rng : np.random.Generator
 
+    strategy : optional StrategyModel
+        Strategy used to generate ballots in each trial. Defaults to sincere.
+    context_factory : callable, optional
+        If provided, called as context_factory(electorate, candidates, rng=rng)
+        once per trial to produce a VotingContext.
+
     Returns
     -------
     dict mapping system_name -> list of ElectionMetrics across trials
@@ -180,7 +206,17 @@ def run_monte_carlo(
 
     for _ in range(n_trials):
         electorate, candidates = scenario_factory(rng=rng)
-        trial_metrics = run_simulation(electorate, candidates, systems, approval_threshold)
+        context = None
+        if context_factory is not None:
+            context = context_factory(electorate, candidates, rng=rng)
+        trial_metrics = run_simulation(
+            electorate,
+            candidates,
+            systems,
+            approval_threshold,
+            strategy=strategy,
+            context=context,
+        )
         for m in trial_metrics:
             results_by_system[m.system_name].append(m)
 

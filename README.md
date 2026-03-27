@@ -52,7 +52,6 @@ pip install -e ".[dev]"
 ```python
 import numpy as np
 from electoral_sim.scenario import load_scenario
-from electoral_sim.ballots import BallotProfile
 from electoral_sim.systems import get_all_systems
 from electoral_sim.metrics import run_simulation
 
@@ -171,6 +170,7 @@ pytest tests/ -v
 ```
 electoral_sim/
 ├── cli.py          # Command-line runner
+├── strategies/     # Sincere and strategic ballot-generation models
 ├── electorate/     # Voter distribution generation (Gaussian, GMM, uniform)
 ├── candidates/     # Candidate positioning in [0,1]^2
 ├── ballots/        # BallotProfile: all ballot types from preference vectors
@@ -187,9 +187,68 @@ notebooks/
 tests/              # Unit tests for simulator, visualization, and CLI behaviour
 ```
 
-## Key Assumption
+## Voting Strategies
 
-**Sincere voting throughout.** All ballots are derived deterministically from preference distances. Strategic voting is out of scope for v1.
+Ballots can be generated under different voting strategies by passing a
+strategy model to `run_simulation(...)`.
+
+The currently available strategy models are:
+
+| Strategy | Description |
+|---|---|
+| `SincereStrategy` | Ballots are derived directly from preference distances |
+| `PluralityCompromiseStrategy` | Voters may abandon non-viable favourites under plurality |
+
+If no strategy is specified, `run_simulation(...)` uses `SincereStrategy`.
+
+Use a strategy explicitly in the Python API:
+
+```python
+import numpy as np
+from electoral_sim.scenario import load_scenario
+from electoral_sim.metrics import run_simulation
+from electoral_sim.systems import Plurality
+from electoral_sim.strategies import PluralityCompromiseStrategy
+
+rng = np.random.default_rng(42)
+config, electorate, candidates = load_scenario(
+    "configs/scenarios/02_polarized_bimodal.yaml", rng=rng
+)
+
+metrics = run_simulation(
+    electorate,
+    candidates,
+    systems=[Plurality()],
+    strategy=PluralityCompromiseStrategy(
+        compromise_rate=1.0,
+        viability_threshold=0.15,
+        frontrunner_count=2,
+        rng=rng,
+    ),
+)
+```
+
+To provide explicit polling information or other strategic context, pass a
+`VotingContext` alongside the strategy:
+
+```python
+import numpy as np
+from electoral_sim.metrics import run_simulation
+from electoral_sim.strategies import PluralityCompromiseStrategy, VotingContext
+from electoral_sim.systems import Plurality
+
+context = VotingContext(
+    poll_shares=np.array([0.42, 0.18, 0.40]),
+)
+
+metrics = run_simulation(
+    electorate,
+    candidates,
+    systems=[Plurality()],
+    strategy=PluralityCompromiseStrategy(),
+    context=context,
+)
+```
 
 ## Citation
 
@@ -205,5 +264,3 @@ If you use this package in your research, please cite:
       url={https://arxiv.org/abs/2603.08752}, 
 }
 ```
-
-

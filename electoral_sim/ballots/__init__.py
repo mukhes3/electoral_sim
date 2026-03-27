@@ -112,6 +112,29 @@ class BallotProfile:
             n_candidates=candidates.n_candidates,
         )
 
+    @classmethod
+    def from_strategy(
+        cls,
+        electorate: Electorate,
+        candidates: CandidateSet,
+        strategy,
+        approval_threshold: float | None = None,
+        context=None,
+    ) -> BallotProfile:
+        """
+        Derive ballots through a strategy model.
+
+        This is backward compatible with the existing sincere workflow:
+        use SincereStrategy (or strategy=None at higher-level APIs) to recover
+        the same ballots produced by from_preferences().
+        """
+        return strategy.generate_ballots(
+            electorate,
+            candidates,
+            approval_threshold=approval_threshold,
+            context=context,
+        )
+
     def pairwise_matrix(self) -> np.ndarray:
         """
         Compute pairwise majority matrix M where M[i,j] = fraction of voters
