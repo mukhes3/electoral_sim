@@ -73,6 +73,18 @@ for m in sorted(metrics, key=lambda x: x.distance_to_median):
           f"  majority_sat={m.majority_satisfaction:.3f}")
 ```
 
+## Notebooks
+
+The repository includes several notebooks for different entry points:
+
+| Notebook | Purpose |
+|---|---|
+| `notebooks/quickstart.ipynb` | Minimal introduction to loading scenarios and comparing systems |
+| `notebooks/electoral_systems_comparison.ipynb` | Main comparison notebook for the built-in scenarios and paper-style figures |
+| `notebooks/plurality_vs_irv_strategic_comparison.ipynb` | Compares closed-primary plurality against alternative primary/general-election pipelines under different strategy assumptions |
+| `notebooks/vote_splitting_and_spoiler_effect.ipynb` | Explores vote splitting, spoiler candidates, and which systems are most vulnerable |
+
+
 ## CLI Runner
 
 The package also ships with a lightweight command-line interface for running
@@ -286,18 +298,22 @@ electoral_sim/
 ├── cli.py          # Command-line runner
 ├── strategies/     # Sincere and strategic ballot-generation models
 ├── electorate/     # Voter distribution generation (Gaussian, GMM, uniform)
-├── candidates/     # Candidate positioning in [0,1]^2
+├── candidates/     # Candidate positioning in [0,1]^N
 ├── ballots/        # BallotProfile: all ballot types from preference vectors
-├── systems/        # 9 standard electoral system implementations
+├── systems/        # Electoral system implementations, including PR variants
 ├── fractional.py   # Fractional Ballot (hypothetical benchmark)
 ├── metrics/        # Distance metrics, Monte Carlo runner
 ├── primaries/      # Two-party primary pipeline
 ├── scenario.py     # YAML scenario loader
+├── utils/          # Visualization helpers
 └── types.py        # ElectionResult dataclass
 configs/
-└── scenarios/      # 8 YAML scenario definitions
+└── scenarios/      # Built-in scenario definitions
 notebooks/
-└── 01_electoral_systems_comparison.ipynb  # Reproduces all paper figures
+├── quickstart.ipynb
+├── electoral_systems_comparison.ipynb
+├── plurality_vs_irv_strategic_comparison.ipynb
+└── vote_splitting_and_spoiler_effect.ipynb
 tests/              # Unit tests for simulator, visualization, and CLI behaviour
 ```
 
