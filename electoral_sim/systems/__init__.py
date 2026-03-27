@@ -81,6 +81,7 @@ class ElectoralSystem(ABC):
         seat_shares: dict[int, float],
         candidates: CandidateSet,
         metadata: dict | None = None,
+        outcome_rule: str = "axis_median",
     ) -> ElectionResult:
         """
         Build a PR ElectionResult with two distinct outcome representations:
@@ -94,9 +95,10 @@ class ElectoralSystem(ABC):
             Position of the legislator at the 50th percentile of the
             cumulative seat distribution, sorted along the first dimension
             (economic axis). Consistent with the pivot/median voter theorem
-            applied to the legislature. Used as outcome_position.
+            applied to the legislature. Preserved for backward compatibility.
         """
         n_dims = candidates.n_dims
+        metadata = metadata or {}
 
         # ── Centroid: weighted mean ───────────────────────────────────────────
         centroid = np.zeros(n_dims)
@@ -114,9 +116,17 @@ class ElectoralSystem(ABC):
                 median_leg_pos = candidates.positions[idx].copy()
                 break
 
+        outcome_pos = self._resolve_pr_outcome_position(
+            seat_shares,
+            candidates,
+            centroid,
+            median_leg_pos,
+            outcome_rule,
+        )
+
         winner_indices = sorted(seat_shares, key=seat_shares.get, reverse=True)
         return ElectionResult(
-            outcome_position=median_leg_pos,       # primary metric uses median legislator
+            outcome_position=outcome_pos,
             centroid_position=centroid,
             median_legislator_position=median_leg_pos,
             winner_indices=winner_indices,
@@ -124,8 +134,81 @@ class ElectoralSystem(ABC):
             elimination_order=[],
             system_name=self.name,
             is_pr=True,
-            metadata=metadata or {},
+            metadata={**metadata, "outcome_rule": outcome_rule},
         )
+
+    def _resolve_pr_outcome_position(
+        self,
+        seat_shares: dict[int, float],
+        candidates: CandidateSet,
+        centroid: np.ndarray,
+        axis_median: np.ndarray,
+        outcome_rule: str,
+    ) -> np.ndarray:
+        """Select a PR outcome position from the elected seat distribution."""
+        if outcome_rule == "axis_median":
+            return axis_median.copy()
+        if outcome_rule == "centroid":
+            return centroid.copy()
+
+        elected_indices = list(seat_shares)
+        elected_positions = np.array([candidates.positions[idx] for idx in elected_indices], dtype=float)
+        weights = np.array([seat_shares[idx] for idx in elected_indices], dtype=float)
+
+        if outcome_rule == "legislative_geometric_median":
+            return self._weighted_geometric_median(elected_positions, weights)
+        if outcome_rule == "legislative_medoid":
+            return self._weighted_medoid(elected_positions, weights)
+
+        valid_rules = [
+            "axis_median",
+            "centroid",
+            "legislative_geometric_median",
+            "legislative_medoid",
+        ]
+        raise ValueError(
+            f"Unknown PR outcome_rule: {outcome_rule}. "
+            f"Expected one of {valid_rules}."
+        )
+
+    @staticmethod
+    def _weighted_geometric_median(
+        points: np.ndarray,
+        weights: np.ndarray,
+        tol: float = 1e-6,
+        max_iter: int = 300,
+    ) -> np.ndarray:
+        """Weighted geometric median via Weiszfeld's algorithm."""
+        if len(points) == 1:
+            return points[0].copy()
+
+        weights = np.asarray(weights, dtype=float)
+        weights = weights / weights.sum()
+        x = (weights[:, None] * points).sum(axis=0)
+
+        for _ in range(max_iter):
+            dists = np.linalg.norm(points - x, axis=1)
+            zero_mask = dists <= 1e-10
+            if zero_mask.any():
+                return points[zero_mask.argmax()].copy()
+
+            inv = weights / dists
+            x_new = (inv[:, None] * points).sum(axis=0) / inv.sum()
+            if np.linalg.norm(x_new - x) < tol:
+                return x_new
+            x = x_new
+
+        return x
+
+    @staticmethod
+    def _weighted_medoid(points: np.ndarray, weights: np.ndarray) -> np.ndarray:
+        """Weighted medoid among elected positions."""
+        if len(points) == 1:
+            return points[0].copy()
+
+        pairwise = np.linalg.norm(points[:, None, :] - points[None, :, :], axis=2)
+        costs = pairwise @ weights
+        return points[int(costs.argmin())].copy()
 
 
 # ---------------------------------------------------------------------------
@@ -397,12 +480,19 @@ class PartyListPR(ElectoralSystem):
     Party-list proportional representation using D'Hondt method.
     Allocates n_seats seats proportionally to vote shares.
     Includes an electoral threshold below which parties get no seats.
-    The outcome is the seat-share-weighted centroid of elected parties.
+    By default, the outcome uses the legacy axis-median rule; alternative
+    multidimensional outcome rules can be selected via outcome_rule.
     """
 
-    def __init__(self, n_seats: int = 100, threshold: float = 0.05):
+    def __init__(
+        self,
+        n_seats: int = 100,
+        threshold: float = 0.05,
+        outcome_rule: str = "axis_median",
+    ):
         self.n_seats = n_seats
         self.threshold = threshold
+        self.outcome_rule = outcome_rule
 
     @property
     def name(self) -> str:
@@ -410,7 +500,11 @@ class PartyListPR(ElectoralSystem):
 
     @property
     def parameters(self) -> dict:
-        return {"n_seats": self.n_seats, "threshold": self.threshold}
+        return {
+            "n_seats": self.n_seats,
+            "threshold": self.threshold,
+            "outcome_rule": self.outcome_rule,
+        }
 
     def run(self, ballots: BallotProfile, candidates: CandidateSet) -> ElectionResult:
         n_c = candidates.n_candidates
@@ -425,8 +519,12 @@ class PartyListPR(ElectoralSystem):
         if adjusted_votes.sum() == 0:
             # Fallback: no party clears threshold; give all seats to plurality winner
             winner = int(vote_counts.argmax())
-            return self._make_pr_result({winner: 1.0}, candidates,
-                                        metadata={"threshold_applied": True, "all_failed": True})
+            return self._make_pr_result(
+                {winner: 1.0},
+                candidates,
+                metadata={"threshold_applied": True, "all_failed": True},
+                outcome_rule=self.outcome_rule,
+            )
 
         # D'Hondt seat allocation
         seats = np.zeros(n_c, dtype=int)
@@ -440,7 +538,8 @@ class PartyListPR(ElectoralSystem):
         seat_shares = {i: seats[i] / self.n_seats for i in range(n_c) if seats[i] > 0}
         return self._make_pr_result(
             seat_shares, candidates,
-            metadata={"seats": seats, "vote_shares": vote_shares, "threshold": self.threshold}
+            metadata={"seats": seats, "vote_shares": vote_shares, "threshold": self.threshold},
+            outcome_rule=self.outcome_rule,
         )
 
 
@@ -458,11 +557,13 @@ class MixedMemberProportional(ElectoralSystem):
         n_total_seats: int = 100,
         district_seat_fraction: float = 0.5,
         threshold: float = 0.05,
+        outcome_rule: str = "axis_median",
         rng: np.random.Generator | None = None,
     ):
         self.n_total_seats = n_total_seats
         self.district_seat_fraction = district_seat_fraction
         self.threshold = threshold
+        self.outcome_rule = outcome_rule
         self._rng = rng or np.random.default_rng()
 
     @property
@@ -475,6 +576,7 @@ class MixedMemberProportional(ElectoralSystem):
             "n_total_seats": self.n_total_seats,
             "district_seat_fraction": self.district_seat_fraction,
             "threshold": self.threshold,
+            "outcome_rule": self.outcome_rule,
         }
 
     def run(self, ballots: BallotProfile, candidates: CandidateSet) -> ElectionResult:
@@ -530,7 +632,8 @@ class MixedMemberProportional(ElectoralSystem):
                 "list_seats": list_seats,
                 "total_seats": total_seats,
                 "vote_shares": vote_shares,
-            }
+            },
+            outcome_rule=self.outcome_rule,
         )
 
 

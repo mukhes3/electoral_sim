@@ -18,15 +18,17 @@ class ElectionResult:
         centroid_position          = seat-share-weighted mean of elected parties.
                                      Approximates the voter mean by construction;
                                      included for reference but NOT used as the
-                                     primary outcome metric.
+                                     primary outcome metric unless explicitly selected.
         median_legislator_position = position of the legislator at the 50th
                                      percentile of the cumulative seat-share
                                      distribution (sorted by first dimension).
-                                     More consistent with spatial models of
-                                     legislative bargaining (pivot voter theorem).
-        outcome_position           = median_legislator_position for PR systems.
-                                     This is the metric used for all distance
-                                     calculations.
+                                     Preserved as the default backward-compatible
+                                     PR outcome summary.
+        outcome_position           = the configured PR outcome position used for
+                                     all distance calculations. By default this
+                                     equals median_legislator_position, but
+                                     multidimensional PR systems may choose a
+                                     different outcome rule.
     """
     outcome_position: np.ndarray           # shape (n_dims,) — primary policy outcome
     centroid_position: np.ndarray          # shape (n_dims,) — seat-share centroid (PR only meaningful)

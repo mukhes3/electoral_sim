@@ -282,12 +282,64 @@ class TestPR:
         assert result.centroid_position is not None
         assert result.median_legislator_position is not None
 
+    def test_pr_axis_median_remains_default(self):
+        """Default PR outcome rule should remain backward compatible."""
+        e, c = make_symmetric_bimodal()
+        b = BallotProfile.from_preferences(e, c)
+        result = PartyListPR(n_seats=100).run(b, c)
+        assert result.metadata["outcome_rule"] == "axis_median"
+        assert np.allclose(result.outcome_position, result.median_legislator_position)
+
+    def test_pr_legislative_geometric_median_works_in_multiple_dimensions(self):
+        positions = np.array([
+            [0.10, 0.20, 0.90],
+            [0.30, 0.40, 0.60],
+            [0.80, 0.70, 0.20],
+            [0.55, 0.15, 0.50],
+        ])
+        labels = ["A", "B", "C", "D"]
+        candidates = CandidateSet(positions, labels)
+        seat_shares = {0: 0.26, 1: 0.25, 2: 0.24, 3: 0.25}
+
+        system = PartyListPR(outcome_rule="legislative_geometric_median")
+        result = system._make_pr_result(seat_shares, candidates, outcome_rule=system.outcome_rule)
+
+        assert result.metadata["outcome_rule"] == "legislative_geometric_median"
+        assert result.outcome_position.shape == (3,)
+        assert not np.allclose(result.outcome_position, result.median_legislator_position)
+
+    def test_pr_legislative_medoid_returns_elected_position(self):
+        positions = np.array([
+            [0.10, 0.20, 0.90],
+            [0.30, 0.40, 0.60],
+            [0.80, 0.70, 0.20],
+        ])
+        labels = ["A", "B", "C"]
+        candidates = CandidateSet(positions, labels)
+        seat_shares = {0: 0.2, 1: 0.5, 2: 0.3}
+
+        system = PartyListPR(outcome_rule="legislative_medoid")
+        result = system._make_pr_result(seat_shares, candidates, outcome_rule=system.outcome_rule)
+
+        assert result.metadata["outcome_rule"] == "legislative_medoid"
+        assert any(np.allclose(result.outcome_position, pos) for pos in positions)
+
     def test_mmp_seat_shares_sum_to_one(self):
         rng = np.random.default_rng(42)
         e, c = make_symmetric_bimodal()
         b = BallotProfile.from_preferences(e, c)
         result = MixedMemberProportional(rng=rng).run(b, c)
         assert abs(sum(result.seat_shares.values()) - 1.0) < 1e-9
+
+    def test_mmp_accepts_multidimensional_outcome_rule(self):
+        rng = np.random.default_rng(42)
+        e, c = make_symmetric_bimodal()
+        b = BallotProfile.from_preferences(e, c)
+        result = MixedMemberProportional(
+            rng=rng,
+            outcome_rule="legislative_geometric_median",
+        ).run(b, c)
+        assert result.metadata["outcome_rule"] == "legislative_geometric_median"
 
 
 # ---------------------------------------------------------------------------
