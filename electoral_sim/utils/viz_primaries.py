@@ -34,7 +34,7 @@ from electoral_sim.primaries import (
     PartySpec, PrimaryResult, TwoPartyGeneralResult, PrimaryType
 )
 from electoral_sim.utils.viz_electorate import (
-    _kde_contours, _plot_reference_points, _style_spatial_ax,
+    _build_spatial_projection, _kde_contours, _plot_reference_points, _style_spatial_ax,
     MEAN_COLOR, MEDIAN_COLOR, FIGURE_DPI, SAVE_DPI,
 )
 
@@ -87,7 +87,12 @@ def plot_primary_spatial(
     - Geometric median and mean reference points
     - Distance annotations
     """
-    assert electorate.n_dims == 2
+    extra_points = [candidates.positions, result.general_result.outcome_position]
+    for pr in result.primary_results:
+        extra_points.append(pr.nominee_position)
+    projection = _build_spatial_projection(electorate, extra_points=extra_points)
+    projected_candidates = projection.project(candidates.positions)
+    projected_winner = projection.project(result.general_result.outcome_position)
 
     standalone = ax is None
     if standalone:
@@ -107,16 +112,25 @@ def plot_primary_spatial(
             prefs = electorate.preferences[mask]
             if len(prefs) > 10:
                 color = _party_color(party.name)
-                kde   = gaussian_kde(prefs.T, bw_method="scott")
-                xi    = np.linspace(0, 1, 80)
-                yi    = np.linspace(0, 1, 80)
+                projected_prefs = projection.project(prefs)
+                kde   = gaussian_kde(projected_prefs.T, bw_method="scott")
+                x_min, x_max, y_min, y_max = projection.extent
+                xi    = np.linspace(x_min, x_max, 80)
+                yi    = np.linspace(y_min, y_max, 80)
                 Xi, Yi = np.meshgrid(xi, yi)
                 Zi = kde(np.vstack([Xi.ravel(), Yi.ravel()])).reshape(Xi.shape)
                 ax.contourf(Xi, Yi, Zi, levels=4,
                             colors=[color], alpha=0.12)
 
     # ── Full-electorate KDE outline ───────────────────────────────────────────
-    _kde_contours(ax, electorate.preferences, levels=5, cmap="Greys", alpha=0.35)
+    _kde_contours(
+        ax,
+        projection.projected_preferences,
+        extent=projection.extent,
+        levels=5,
+        cmap="Greys",
+        alpha=0.35,
+    )
 
     # ── All candidates ────────────────────────────────────────────────────────
     nominee_global_indices = {pr.nominee_index for pr in result.primary_results}
@@ -125,7 +139,7 @@ def plot_primary_spatial(
     for party in parties:
         color = _party_color(party.name)
         for idx in party.candidate_indices:
-            pos      = candidates.positions[idx]
+            pos      = projected_candidates[idx]
             is_nom   = idx in nominee_global_indices
             marker   = "★" if is_nom else "o"
             size     = 280 if is_nom else 90
@@ -155,14 +169,19 @@ def plot_primary_spatial(
         ))
 
     # ── General winner marker ─────────────────────────────────────────────────
-    winner_pos = result.general_result.outcome_position
-    ax.scatter(winner_pos[0], winner_pos[1], s=380, c=WINNER_COLOR,
+    ax.scatter(projected_winner[0], projected_winner[1], s=380, c=WINNER_COLOR,
                marker="*", zorder=10, edgecolors="black", linewidths=2.0)
     handles.append(mpatches.Patch(color=WINNER_COLOR,
                                    label=f"General winner  d(median)={result.general_metrics.distance_to_median:.4f}"))
 
     # ── Reference points ─────────────────────────────────────────────────────
-    ref_handles = _plot_reference_points(ax, electorate, show_mean=True, show_median=True)
+    ref_handles = _plot_reference_points(
+        ax,
+        electorate,
+        projection=projection,
+        show_mean=True,
+        show_median=True,
+    )
     handles += ref_handles
 
     # ── Baseline comparison annotation ───────────────────────────────────────
@@ -183,7 +202,7 @@ def plot_primary_spatial(
             transform=ax.transAxes, ha="left", va="bottom", fontsize=8,
             bbox=dict(boxstyle="round,pad=0.3", facecolor="white", alpha=0.88))
 
-    _style_spatial_ax(ax, title or "Two-Party Primary", electorate.dim_names)
+    _style_spatial_ax(ax, title or "Two-Party Primary", electorate.dim_names, projection)
     ax.legend(handles=handles, loc="upper left", fontsize=7.2,
                framealpha=0.88, borderpad=0.6)
 
@@ -394,15 +413,34 @@ def plot_nominee_positions(
         e = electorates[scen_name]
         c = candidates_map[scen_name]
         res_dict = scenario_results[scen_name]
+        extra_points = [c.positions]
+        for result in res_dict.values():
+            extra_points.append(result.general_result.outcome_position)
+            for pr in result.primary_results:
+                extra_points.append(pr.nominee_position)
+        projection = _build_spatial_projection(e, extra_points=extra_points)
 
-        _kde_contours(ax, e.preferences, levels=5, cmap="Greys", alpha=0.35)
-        _plot_reference_points(ax, e, show_mean=True, show_median=True)
+        _kde_contours(
+            ax,
+            projection.projected_preferences,
+            extent=projection.extent,
+            levels=5,
+            cmap="Greys",
+            alpha=0.35,
+        )
+        _plot_reference_points(
+            ax,
+            e,
+            projection=projection,
+            show_mean=True,
+            show_median=True,
+        )
 
         handles = []
         for (config_key, color) in zip(config_keys, config_colors):
             result = res_dict[config_key]
             for pr in result.primary_results:
-                pos   = pr.nominee_position
+                pos   = projection.project(pr.nominee_position)
                 pcol  = _party_color(pr.party_name)
                 # Outline color = config color
                 ax.scatter(pos[0], pos[1], s=160, c=[pcol],
@@ -415,7 +453,7 @@ def plot_nominee_positions(
         base_pos = first_result.baseline_metrics  # used for annotation only
         baseline_winner = first_result.general_result  # NOTE: baseline re-computed below
 
-        _style_spatial_ax(ax, scen_name, e.dim_names)
+        _style_spatial_ax(ax, scen_name, e.dim_names, projection)
         ax.legend(handles=handles, loc="upper left", fontsize=7, framealpha=0.85)
 
     for ax in axes_flat[n:]:
