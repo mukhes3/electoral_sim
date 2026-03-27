@@ -159,34 +159,6 @@ candidates:
 ```
 
 
-## Running Tests
-
-```bash
-pytest tests/ -v
-```
-
-## Project Structure
-
-```
-electoral_sim/
-├── cli.py          # Command-line runner
-├── strategies/     # Sincere and strategic ballot-generation models
-├── electorate/     # Voter distribution generation (Gaussian, GMM, uniform)
-├── candidates/     # Candidate positioning in [0,1]^2
-├── ballots/        # BallotProfile: all ballot types from preference vectors
-├── systems/        # 9 standard electoral system implementations
-├── fractional.py   # Fractional Ballot (hypothetical benchmark)
-├── metrics/        # Distance metrics, Monte Carlo runner
-├── primaries/      # Two-party primary pipeline
-├── scenario.py     # YAML scenario loader
-└── types.py        # ElectionResult dataclass
-configs/
-└── scenarios/      # 8 YAML scenario definitions
-notebooks/
-└── 01_electoral_systems_comparison.ipynb  # Reproduces all paper figures
-tests/              # Unit tests for simulator, visualization, and CLI behaviour
-```
-
 ## Voting Strategies
 
 Ballots can be generated under different voting strategies by passing a
@@ -198,6 +170,11 @@ The currently available strategy models are:
 |---|---|
 | `SincereStrategy` | Ballots are derived directly from preference distances |
 | `PluralityCompromiseStrategy` | Voters may abandon non-viable favourites under plurality |
+| `ApprovalThresholdStrategy` | Voters approve candidates above a utility threshold |
+| `ScoreMaxMinStrategy` | Voters exaggerate scores to a max-min scale |
+| `RankedTruncationStrategy` | Voters submit only the top portion of a ranking |
+| `RankedBuryingStrategy` | Voters demote a strong rival to the bottom of the ranking |
+| `TurnoutStrategy` | Some voters abstain while participants vote sincerely |
 
 If no strategy is specified, `run_simulation(...)` uses `SincereStrategy`.
 
@@ -228,6 +205,47 @@ metrics = run_simulation(
 )
 ```
 
+Other strategies are selected in the same way:
+
+```python
+from electoral_sim.metrics import run_simulation
+from electoral_sim.strategies import (
+    ApprovalThresholdStrategy,
+    RankedTruncationStrategy,
+    ScoreMaxMinStrategy,
+    TurnoutStrategy,
+)
+from electoral_sim.systems import ApprovalVoting, InstantRunoff, ScoreVoting
+
+approval_metrics = run_simulation(
+    electorate,
+    candidates,
+    systems=[ApprovalVoting()],
+    strategy=ApprovalThresholdStrategy(utility_threshold=0.65),
+)
+
+score_metrics = run_simulation(
+    electorate,
+    candidates,
+    systems=[ScoreVoting()],
+    strategy=ScoreMaxMinStrategy(utility_threshold=0.7),
+)
+
+ranked_metrics = run_simulation(
+    electorate,
+    candidates,
+    systems=[InstantRunoff()],
+    strategy=RankedTruncationStrategy(max_ranked=3),
+)
+
+turnout_metrics = run_simulation(
+    electorate,
+    candidates,
+    systems=[ApprovalVoting()],
+    strategy=TurnoutStrategy(turnout_probability=0.8),
+)
+```
+
 To provide explicit polling information or other strategic context, pass a
 `VotingContext` alongside the strategy:
 
@@ -248,6 +266,34 @@ metrics = run_simulation(
     strategy=PluralityCompromiseStrategy(),
     context=context,
 )
+```
+
+## Running Tests
+
+```bash
+pytest tests/ -v
+```
+
+## Project Structure
+
+```
+electoral_sim/
+├── cli.py          # Command-line runner
+├── strategies/     # Sincere and strategic ballot-generation models
+├── electorate/     # Voter distribution generation (Gaussian, GMM, uniform)
+├── candidates/     # Candidate positioning in [0,1]^2
+├── ballots/        # BallotProfile: all ballot types from preference vectors
+├── systems/        # 9 standard electoral system implementations
+├── fractional.py   # Fractional Ballot (hypothetical benchmark)
+├── metrics/        # Distance metrics, Monte Carlo runner
+├── primaries/      # Two-party primary pipeline
+├── scenario.py     # YAML scenario loader
+└── types.py        # ElectionResult dataclass
+configs/
+└── scenarios/      # 8 YAML scenario definitions
+notebooks/
+└── 01_electoral_systems_comparison.ipynb  # Reproduces all paper figures
+tests/              # Unit tests for simulator, visualization, and CLI behaviour
 ```
 
 ## Citation

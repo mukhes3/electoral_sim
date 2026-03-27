@@ -1,4 +1,4 @@
-"""Plurality-specific strategic voting models."""
+"""Turnout and abstention models."""
 from __future__ import annotations
 
 from dataclasses import dataclass, field
@@ -12,20 +12,22 @@ from electoral_sim.strategies.common import ViabilityMixin
 
 
 @dataclass
-class PluralityCompromiseStrategy(ViabilityMixin, StrategyModel):
+class TurnoutStrategy(ViabilityMixin, StrategyModel):
     """
-    Strategic plurality model where voters may desert non-viable favorites.
+    Model abstention while leaving ballot expression sincere for participants.
 
-    The strategy leaves rankings, approvals, and scores sincere for now and
-    changes only the cast plurality vote. This keeps the existing ballot
-    interface intact while giving the simulator a first non-sincere baseline.
+    A voter turns out with `turnout_probability` by default. If
+    `abstain_if_favorite_nonviable` is enabled, voters whose sincere favourite
+    is not viable abstain with `abstain_probability_when_nonviable`.
     """
-    compromise_rate: float = 1.0
+    turnout_probability: float = 1.0
+    abstain_if_favorite_nonviable: bool = False
+    abstain_probability_when_nonviable: float = 1.0
     rng: np.random.Generator = field(default_factory=np.random.default_rng)
 
     @property
     def name(self) -> str:
-        return "Plurality Compromise"
+        return "Turnout"
 
     def generate_ballots(
         self,
@@ -39,22 +41,18 @@ class PluralityCompromiseStrategy(ViabilityMixin, StrategyModel):
             candidates,
             approval_threshold=approval_threshold,
         )
-        viable = self.viable_candidates(sincere, context)
-        if len(viable) == 0:
-            return sincere
+        active = self.rng.random(sincere.n_voters) < self.turnout_probability
 
-        plurality = sincere.plurality.copy()
-        for voter_idx in range(sincere.n_voters):
-            sincere_choice = plurality[voter_idx]
-            if sincere_choice in viable:
-                continue
-            if self.rng.random() > self.compromise_rate:
-                continue
-            viable_dists = sincere.distances[voter_idx, viable]
-            plurality[voter_idx] = int(viable[viable_dists.argmin()])
+        if self.abstain_if_favorite_nonviable:
+            viable = self.viable_candidates(sincere, context)
+            for voter_idx, favorite in enumerate(sincere.plurality):
+                if favorite in viable:
+                    continue
+                if self.rng.random() < self.abstain_probability_when_nonviable:
+                    active[voter_idx] = False
 
         return BallotProfile(
-            plurality=plurality,
+            plurality=sincere.plurality,
             rankings=sincere.rankings,
             scores=sincere.scores,
             approvals=sincere.approvals,
@@ -62,5 +60,5 @@ class PluralityCompromiseStrategy(ViabilityMixin, StrategyModel):
             approval_threshold=sincere.approval_threshold,
             n_voters=sincere.n_voters,
             n_candidates=sincere.n_candidates,
-            active_voter_mask=sincere.active_voter_mask,
+            active_voter_mask=active,
         )

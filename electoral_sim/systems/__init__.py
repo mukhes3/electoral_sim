@@ -140,11 +140,12 @@ class Plurality(ElectoralSystem):
         return "Plurality (FPTP)"
 
     def run(self, ballots: BallotProfile, candidates: CandidateSet) -> ElectionResult:
-        vote_counts = np.bincount(ballots.plurality, minlength=candidates.n_candidates)
+        vote_counts = ballots.plurality_counts()
+        n_voters = max(ballots.n_active_voters, 1)
         winner = int(vote_counts.argmax())
         return self._make_result(
             winner, candidates,
-            metadata={"vote_counts": vote_counts, "vote_shares": vote_counts / ballots.n_voters}
+            metadata={"vote_counts": vote_counts, "vote_shares": vote_counts / n_voters}
         )
 
 
@@ -166,8 +167,9 @@ class TwoRoundRunoff(ElectoralSystem):
         return {"first_round_threshold": self.first_round_threshold}
 
     def run(self, ballots: BallotProfile, candidates: CandidateSet) -> ElectionResult:
-        vote_counts = np.bincount(ballots.plurality, minlength=candidates.n_candidates)
-        vote_shares = vote_counts / ballots.n_voters
+        n_voters = max(ballots.n_active_voters, 1)
+        vote_counts = ballots.plurality_counts()
+        vote_shares = vote_counts / n_voters
 
         # Check for first-round majority
         if vote_shares.max() >= self.first_round_threshold:
@@ -180,8 +182,10 @@ class TwoRoundRunoff(ElectoralSystem):
         # Re-vote: each voter votes for whichever of top2 they ranked higher
         top2_set = set(top2)
         r2_votes = np.zeros(candidates.n_candidates)
-        for voter_ranking in ballots.rankings:
+        for voter_ranking in ballots.active_rankings():
             for c in voter_ranking:
+                if c < 0:
+                    continue
                 if c in top2_set:
                     r2_votes[c] += 1
                     break
@@ -190,7 +194,7 @@ class TwoRoundRunoff(ElectoralSystem):
         return self._make_result(
             winner, candidates,
             metadata={"round": 2, "vote_shares_r1": vote_shares,
-                      "r2_votes": r2_votes / ballots.n_voters, "finalists": list(top2)}
+                      "r2_votes": r2_votes / n_voters, "finalists": list(top2)}
         )
 
 
@@ -218,18 +222,21 @@ class InstantRunoff(ElectoralSystem):
         elimination_order = []
 
         # Working copy of rankings, filtered to active candidates each round
-        rankings = ballots.rankings.copy()
+        rankings = ballots.active_rankings().copy()
 
         for _ in range(n_c - 1):
             # Count first active-candidate votes for each voter
             vote_counts = np.zeros(n_c)
             for voter_ranking in rankings:
                 for c in voter_ranking:
+                    if c < 0:
+                        continue
                     if c in active:
                         vote_counts[c] += 1
                         break
 
-            vote_shares = vote_counts / ballots.n_voters
+            continuing_ballots = max(vote_counts.sum(), 1.0)
+            vote_shares = vote_counts / continuing_ballots
 
             # Check for majority winner
             for c in active:
@@ -267,9 +274,11 @@ class BordaCount(ElectoralSystem):
     def run(self, ballots: BallotProfile, candidates: CandidateSet) -> ElectionResult:
         scores = ballots.borda_scores()
         winner = int(scores.argmax())
+        total_points = scores.sum()
+        borda_shares = scores / total_points if total_points > 0 else np.zeros_like(scores)
         return self._make_result(
             winner, candidates,
-            metadata={"borda_scores": scores, "borda_shares": scores / scores.sum()}
+            metadata={"borda_scores": scores, "borda_shares": borda_shares}
         )
 
 
@@ -284,13 +293,14 @@ class ApprovalVoting(ElectoralSystem):
         return "Approval Voting"
 
     def run(self, ballots: BallotProfile, candidates: CandidateSet) -> ElectionResult:
-        approval_counts = ballots.approvals.sum(axis=0)
+        n_voters = max(ballots.n_active_voters, 1)
+        approval_counts = ballots.active_approvals().sum(axis=0)
         winner = int(approval_counts.argmax())
         return self._make_result(
             winner, candidates,
             metadata={
                 "approval_counts": approval_counts,
-                "approval_rates": approval_counts / ballots.n_voters,
+                "approval_rates": approval_counts / n_voters,
                 "threshold_used": ballots.approval_threshold,
             }
         )
@@ -308,7 +318,10 @@ class ScoreVoting(ElectoralSystem):
         return "Score Voting"
 
     def run(self, ballots: BallotProfile, candidates: CandidateSet) -> ElectionResult:
-        mean_scores = ballots.scores.mean(axis=0)
+        if ballots.n_active_voters == 0:
+            mean_scores = np.zeros(candidates.n_candidates)
+        else:
+            mean_scores = ballots.active_scores().mean(axis=0)
         winner = int(mean_scores.argmax())
         return self._make_result(
             winner, candidates,
@@ -401,8 +414,9 @@ class PartyListPR(ElectoralSystem):
 
     def run(self, ballots: BallotProfile, candidates: CandidateSet) -> ElectionResult:
         n_c = candidates.n_candidates
-        vote_counts = np.bincount(ballots.plurality, minlength=n_c).astype(float)
-        vote_shares = vote_counts / ballots.n_voters
+        n_voters = max(ballots.n_active_voters, 1)
+        vote_counts = ballots.plurality_counts().astype(float)
+        vote_shares = vote_counts / n_voters
 
         # Apply threshold: parties below threshold get zero votes
         above_threshold = vote_shares >= self.threshold
@@ -469,19 +483,21 @@ class MixedMemberProportional(ElectoralSystem):
         n_list_seats = self.n_total_seats - n_district_seats
 
         # Overall vote shares (list vote)
-        vote_counts = np.bincount(ballots.plurality, minlength=n_c).astype(float)
-        vote_shares = vote_counts / ballots.n_voters
+        active_plurality = ballots.active_plurality()
+        n_voters = max(ballots.n_active_voters, 1)
+        vote_counts = ballots.plurality_counts().astype(float)
+        vote_shares = vote_counts / n_voters
 
         # Constituency seats via random district subsampling
         district_seats = np.zeros(n_c, dtype=int)
-        voter_indices = np.arange(ballots.n_voters)
-        district_size = max(1, ballots.n_voters // n_district_seats)
+        voter_indices = np.arange(len(active_plurality))
+        district_size = max(1, len(active_plurality) // max(n_district_seats, 1))
 
         self._rng.shuffle(voter_indices)
         for d in range(n_district_seats):
             start = d * district_size
-            end = min(start + district_size, ballots.n_voters)
-            district_voters = ballots.plurality[voter_indices[start:end]]
+            end = min(start + district_size, len(active_plurality))
+            district_voters = active_plurality[voter_indices[start:end]]
             if len(district_voters) > 0:
                 winner = int(np.bincount(district_voters, minlength=n_c).argmax())
                 district_seats[winner] += 1

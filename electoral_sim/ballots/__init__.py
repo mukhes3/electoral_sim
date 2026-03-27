@@ -41,6 +41,9 @@ class BallotProfile:
 
     approval_threshold : float
         The distance threshold used to derive approvals.
+
+    active_voter_mask : np.ndarray, shape (n_voters,)
+        Boolean mask indicating which voters cast a ballot. Defaults to all True.
     """
     plurality: np.ndarray
     rankings: np.ndarray
@@ -50,6 +53,35 @@ class BallotProfile:
     approval_threshold: float
     n_voters: int
     n_candidates: int
+    active_voter_mask: np.ndarray | None = None
+
+    def __post_init__(self):
+        if self.active_voter_mask is None:
+            self.active_voter_mask = np.ones(self.n_voters, dtype=bool)
+        else:
+            self.active_voter_mask = np.asarray(self.active_voter_mask, dtype=bool)
+        assert self.active_voter_mask.shape == (self.n_voters,)
+
+    @property
+    def n_active_voters(self) -> int:
+        return int(self.active_voter_mask.sum())
+
+    def active_plurality(self) -> np.ndarray:
+        return self.plurality[self.active_voter_mask]
+
+    def active_rankings(self) -> np.ndarray:
+        return self.rankings[self.active_voter_mask]
+
+    def active_scores(self) -> np.ndarray:
+        return self.scores[self.active_voter_mask]
+
+    def active_approvals(self) -> np.ndarray:
+        return self.approvals[self.active_voter_mask]
+
+    def plurality_counts(self) -> np.ndarray:
+        votes = self.active_plurality()
+        valid = votes[votes >= 0]
+        return np.bincount(valid, minlength=self.n_candidates)
 
     @classmethod
     def from_preferences(
@@ -110,6 +142,7 @@ class BallotProfile:
             approval_threshold=approval_threshold,
             n_voters=electorate.n_voters,
             n_candidates=candidates.n_candidates,
+            active_voter_mask=np.ones(electorate.n_voters, dtype=bool),
         )
 
     @classmethod
@@ -144,15 +177,16 @@ class BallotProfile:
         """
         n = self.n_candidates
         M = np.zeros((n, n))
+        rankings = self.active_rankings()
+        if len(rankings) == 0:
+            return M
         for i in range(n):
             for j in range(n):
                 if i != j:
-                    # voter prefers i over j if i appears before j in their ranking
-                    rank_i = np.where(self.rankings == i, np.arange(self.n_candidates), 999)
-                    rank_j = np.where(self.rankings == j, np.arange(self.n_candidates), 999)
-                    # Vectorized: find position of i and j in each voter's ranking
-                    pos_i = (self.rankings == i).argmax(axis=1)
-                    pos_j = (self.rankings == j).argmax(axis=1)
+                    ranked_i = (rankings == i).any(axis=1)
+                    ranked_j = (rankings == j).any(axis=1)
+                    pos_i = np.where(ranked_i, (rankings == i).argmax(axis=1), self.n_candidates + 1)
+                    pos_j = np.where(ranked_j, (rankings == j).argmax(axis=1), self.n_candidates + 1)
                     M[i, j] = (pos_i < pos_j).mean()
         return M
 
@@ -168,12 +202,14 @@ class BallotProfile:
         # For each voter, position in rankings -> points awarded
         # rankings[i] = [c2, c0, c1] means c2 gets n-1 points, c0 gets n-2, etc.
         points = np.zeros(n)
+        rankings = self.active_rankings()
         for rank_pos in range(n):
-            candidates_at_rank = self.rankings[:, rank_pos]
+            candidates_at_rank = rankings[:, rank_pos]
             pts = base - rank_pos
             if pts < 0:
                 pts = 0
-            np.add.at(points, candidates_at_rank, pts)
+            ranked_mask = candidates_at_rank >= 0
+            np.add.at(points, candidates_at_rank[ranked_mask], pts)
         return points
 
     def summary_for_rl(self) -> np.ndarray:
@@ -182,15 +218,21 @@ class BallotProfile:
         Includes: score distribution moments, approval rates,
         pairwise win fractions, plurality vote shares.
         """
+        if self.n_active_voters == 0:
+            zeros = np.zeros(self.n_candidates)
+            pw = self.pairwise_matrix().flatten()
+            return np.concatenate([zeros, zeros, zeros, zeros, pw])
+
         # Plurality vote shares: (n_candidates,)
-        vote_shares = np.bincount(self.plurality, minlength=self.n_candidates) / self.n_voters
+        vote_shares = self.plurality_counts() / max(self.n_active_voters, 1)
 
         # Approval rates per candidate: (n_candidates,)
-        approval_rates = self.approvals.mean(axis=0)
+        approval_rates = self.active_approvals().mean(axis=0)
 
         # Mean and std of scores per candidate: (n_candidates,) x 2
-        score_mean = self.scores.mean(axis=0)
-        score_std = self.scores.std(axis=0)
+        active_scores = self.active_scores()
+        score_mean = active_scores.mean(axis=0)
+        score_std = active_scores.std(axis=0)
 
         # Pairwise win matrix flattened: (n_candidates^2,)
         pw = self.pairwise_matrix().flatten()
