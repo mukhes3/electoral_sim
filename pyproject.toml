@@ -18,6 +18,9 @@ dependencies = [
     "pytest>=7.0",
 ]
 
+[project.scripts]
+electoral-sim = "electoral_sim.cli:main"
+
 [project.optional-dependencies]
 dev = ["jupyter", "ipykernel", "black", "ruff"]
 

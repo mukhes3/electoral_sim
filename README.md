@@ -69,6 +69,55 @@ for m in sorted(metrics, key=lambda x: x.distance_to_median):
           f"  majority_sat={m.majority_satisfaction:.3f}")
 ```
 
+## CLI Runner
+
+The package also ships with a lightweight command-line interface for running
+scenarios without opening a notebook.
+
+List the built-in system keys:
+
+```bash
+electoral-sim list-systems
+```
+
+List available scenario files:
+
+```bash
+electoral-sim list-scenarios
+```
+
+Run a scenario with the default suite of implemented systems:
+
+```bash
+electoral-sim run configs/scenarios/02_polarized_bimodal.yaml --seed 42
+```
+
+Run a smaller comparison with selected systems only:
+
+```bash
+electoral-sim run configs/scenarios/02_polarized_bimodal.yaml \
+  --system plurality,score,irv \
+  --seed 42 \
+  --sort-by distance_to_median
+```
+
+Include the Fractional Ballot benchmark systems:
+
+```bash
+electoral-sim run configs/scenarios/02_polarized_bimodal.yaml \
+  --include-fractional \
+  --fractional-variant both \
+  --fractional-sigmas 0.1,0.3,1.0
+```
+
+Machine-readable output is available in both JSON and CSV:
+
+```bash
+electoral-sim run configs/scenarios/02_polarized_bimodal.yaml \
+  --system plurality,score \
+  --format json
+```
+
 ## Adding a New System
 
 Subclass `ElectoralSystem` and implement a single `run` method:
@@ -121,6 +170,7 @@ pytest tests/ -v
 
 ```
 electoral_sim/
+├── cli.py          # Command-line runner
 ├── electorate/     # Voter distribution generation (Gaussian, GMM, uniform)
 ├── candidates/     # Candidate positioning in [0,1]^2
 ├── ballots/        # BallotProfile: all ballot types from preference vectors
@@ -134,7 +184,7 @@ configs/
 └── scenarios/      # 8 YAML scenario definitions
 notebooks/
 └── 01_electoral_systems_comparison.ipynb  # Reproduces all paper figures
-tests/              # 25 theory-validating unit tests
+tests/              # Unit tests for simulator, visualization, and CLI behaviour
 ```
 
 ## Key Assumption
@@ -155,6 +205,5 @@ If you use this package in your research, please cite:
       url={https://arxiv.org/abs/2603.08752}, 
 }
 ```
-
 
 
