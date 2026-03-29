@@ -317,6 +317,10 @@ notebooks/
 tests/              # Unit tests for simulator, visualization, and CLI behaviour
 ```
 
+## Companion repo
+
+If you want a more user-friendly way to create scenarios, check out the companion repo [electoral_scenario_studio](https://github.com/mukhes3/electoral_scenario_studio) for natural-language authoring, iterative refinement, and visual scenario editing before running comparisons in `electoral_sim`.
+
 ## Citation
 
 If you use this package in your research, please cite:
