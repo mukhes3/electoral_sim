@@ -83,6 +83,45 @@ class BallotProfile:
         valid = votes[votes >= 0]
         return np.bincount(valid, minlength=self.n_candidates)
 
+    def restrict_to_candidates(self, candidate_indices: list[int] | np.ndarray) -> BallotProfile:
+        """
+        Return a new BallotProfile restricted to a subset of candidates.
+
+        Candidate indices are re-labeled to 0..k-1 in the order provided.
+        This is useful for Arrow/IIA-style thought experiments where one
+        compares social outcomes before and after removing candidates.
+        """
+        subset = np.asarray(candidate_indices, dtype=int)
+        if subset.ndim != 1 or len(subset) == 0:
+            raise ValueError("candidate_indices must be a non-empty 1D sequence.")
+        if len(np.unique(subset)) != len(subset):
+            raise ValueError("candidate_indices must not contain duplicates.")
+        if subset.min() < 0 or subset.max() >= self.n_candidates:
+            raise ValueError("candidate_indices out of bounds.")
+
+        remap = {int(old_idx): int(new_idx) for new_idx, old_idx in enumerate(subset)}
+        k = len(subset)
+
+        rankings = np.full((self.n_voters, k), fill_value=-1, dtype=int)
+        plurality = np.full(self.n_voters, fill_value=-1, dtype=int)
+        for voter_idx, voter_ranking in enumerate(self.rankings):
+            filtered = [remap[int(c)] for c in voter_ranking if int(c) in remap]
+            if filtered:
+                plurality[voter_idx] = filtered[0]
+                rankings[voter_idx, : len(filtered)] = filtered
+
+        return BallotProfile(
+            plurality=plurality,
+            rankings=rankings,
+            scores=self.scores[:, subset].copy(),
+            approvals=self.approvals[:, subset].copy(),
+            distances=self.distances[:, subset].copy(),
+            approval_threshold=self.approval_threshold,
+            n_voters=self.n_voters,
+            n_candidates=k,
+            active_voter_mask=self.active_voter_mask.copy(),
+        )
+
     @classmethod
     def from_preferences(
         cls,
@@ -189,6 +228,22 @@ class BallotProfile:
                     pos_j = np.where(ranked_j, (rankings == j).argmax(axis=1), self.n_candidates + 1)
                     M[i, j] = (pos_i < pos_j).mean()
         return M
+
+    def pairwise_preference_counts(self) -> np.ndarray:
+        """
+        Compute pairwise preference counts C where C[i,j] is the number of
+        active voters who rank candidate i ahead of candidate j.
+        """
+        shares = self.pairwise_matrix()
+        return shares * self.n_active_voters
+
+    def pairwise_margin_matrix(self) -> np.ndarray:
+        """
+        Compute pairwise margins M where M[i,j] = share(i over j) - share(j over i).
+        Positive values indicate a majority preference for i over j.
+        """
+        pairwise = self.pairwise_matrix()
+        return pairwise - pairwise.T
 
     def borda_scores(self, base: int | None = None) -> np.ndarray:
         """

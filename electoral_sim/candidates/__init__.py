@@ -30,6 +30,14 @@ class CandidateSet:
             lines.append(f"  {label}: {np.round(pos, 3)}")
         return "\n".join(lines)
 
+    def subset(self, candidate_indices: Sequence[int]) -> CandidateSet:
+        """Return a new CandidateSet restricted to the selected indices."""
+        idx = np.asarray(candidate_indices, dtype=int)
+        return CandidateSet(
+            positions=self.positions[idx].copy(),
+            labels=[self.labels[int(i)] for i in idx],
+        )
+
 
 def fixed_candidates(positions, labels=None):
     pos = np.array(positions, dtype=float)

@@ -83,6 +83,7 @@ The repository includes several notebooks for different entry points:
 | `notebooks/electoral_systems_comparison.ipynb` | Main comparison notebook for the built-in scenarios and paper-style figures |
 | `notebooks/plurality_vs_irv_strategic_comparison.ipynb` | Compares closed-primary plurality against alternative primary/general-election pipelines under different strategy assumptions |
 | `notebooks/vote_splitting_and_spoiler_effect.ipynb` | Explores vote splitting, spoiler candidates, and which systems are most vulnerable |
+| `notebooks/arrows_impossibility_theorem.ipynb` | Explains Arrow's impossibility theorem  |
 
 
 ## CLI Runner
@@ -313,7 +314,8 @@ notebooks/
 ├── quickstart.ipynb
 ├── electoral_systems_comparison.ipynb
 ├── plurality_vs_irv_strategic_comparison.ipynb
-└── vote_splitting_and_spoiler_effect.ipynb
+├── vote_splitting_and_spoiler_effect.ipynb
+└── arrows_impossibility_theorem.ipynb
 tests/              # Unit tests for simulator, visualization, and CLI behaviour
 ```
 
