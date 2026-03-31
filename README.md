@@ -84,6 +84,7 @@ The repository includes several notebooks for different entry points:
 | `notebooks/plurality_vs_irv_strategic_comparison.ipynb` | Compares closed-primary plurality against alternative primary/general-election pipelines under different strategy assumptions |
 | `notebooks/vote_splitting_and_spoiler_effect.ipynb` | Explores vote splitting, spoiler candidates, and which systems are most vulnerable |
 | `notebooks/arrows_impossibility_theorem.ipynb` | Explains Arrow's impossibility theorem  |
+| `notebooks/fractional_reporting_robustness.ipynb` | Examines how the fractional system behaves under honest, noisy, biased, and adversarial spatial reporting, with plurality as a reference point |
 
 
 ## CLI Runner
@@ -286,6 +287,58 @@ metrics = run_simulation(
 )
 ```
 
+## Spatial Reporting Models
+
+The repository also includes practical reporting models for experiments where a
+system does not observe voters' true spatial positions directly.
+
+This is mainly useful for the fractional ballot benchmark, where one may want
+to compare the truthful result with outcomes produced from noisy or strategic
+reported positions.
+
+The currently available reporting models are:
+
+| Reporting model | Description |
+|---|---|
+| `HonestReporting` | Uses true voter positions unchanged |
+| `GaussianNoiseReporting` | Adds symmetric random noise to reported positions |
+| `BiasedNoiseReporting` | Applies a systematic shift to selected voters, optionally with noise |
+| `DirectionalExaggerationReporting` | Moves selected voters away from or toward chosen candidates |
+| `CoalitionMisreporting` | Pulls a selected bloc toward a shared false target position |
+
+Selectors can be used to target only part of the electorate, for example with
+`axis_threshold(...)`, `within_radius(...)`, `nearest_to_candidate(...)`, or
+`candidate_supporters(...)`.
+
+Use the reporting helpers in the Python API like this:
+
+```python
+import numpy as np
+from electoral_sim.fractional import FractionalBallotDiscrete
+from electoral_sim.fractional_reporting import run_fractional_reporting_simulation
+from electoral_sim.reporting import BiasedNoiseReporting, GaussianNoiseReporting, axis_threshold
+
+run = run_fractional_reporting_simulation(
+    electorate,
+    candidates,
+    system=FractionalBallotDiscrete(sigma=0.3),
+    reporting_model=GaussianNoiseReporting(noise_std=0.05, rng=np.random.default_rng(42)),
+)
+
+targeted_run = run_fractional_reporting_simulation(
+    electorate,
+    candidates,
+    system=FractionalBallotDiscrete(sigma=0.3),
+    reporting_model=BiasedNoiseReporting(
+        bias=np.array([0.06, 0.0]),
+        selector=axis_threshold(0, 0.45, side="le"),
+    ),
+)
+
+print(run.truthful_result.winner_indices, run.reported_result.winner_indices)
+print(run.robustness.outcome_shift, run.robustness.winner_changed)
+```
+
 ## Running Tests
 
 ```bash
@@ -298,11 +351,13 @@ pytest tests/ -v
 electoral_sim/
 ├── cli.py          # Command-line runner
 ├── strategies/     # Sincere and strategic ballot-generation models
+├── reporting/      # Honest, noisy, and adversarial spatial reporting models
 ├── electorate/     # Voter distribution generation (Gaussian, GMM, uniform)
 ├── candidates/     # Candidate positioning in [0,1]^N
 ├── ballots/        # BallotProfile: all ballot types from preference vectors
 ├── systems/        # Electoral system implementations, including PR variants
 ├── fractional.py   # Fractional Ballot (hypothetical benchmark)
+├── fractional_reporting.py  # Helpers for reported-position fractional experiments
 ├── metrics/        # Distance metrics, Monte Carlo runner
 ├── primaries/      # Two-party primary pipeline
 ├── scenario.py     # YAML scenario loader
@@ -315,7 +370,8 @@ notebooks/
 ├── electoral_systems_comparison.ipynb
 ├── plurality_vs_irv_strategic_comparison.ipynb
 ├── vote_splitting_and_spoiler_effect.ipynb
-└── arrows_impossibility_theorem.ipynb
+├── arrows_impossibility_theorem.ipynb
+└── fractional_reporting_robustness.ipynb
 tests/              # Unit tests for simulator, visualization, and CLI behaviour
 ```
 
