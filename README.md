@@ -48,6 +48,14 @@ Thirteen real-world-grounded electorate archetypes, including a higher-dimension
 
 ## Installation
 
+Install from PyPI:
+
+```bash
+pip install electoral-simulator
+```
+
+For local development:
+
 ```bash
 pip install -e ".[dev]"
 ```
@@ -351,7 +359,7 @@ This repository is set up for Trusted Publishing through GitHub Actions.
 
 The release flow is:
 
-1. Create the `electoral-sim` project on PyPI if it does not already exist.
+1. Create the `electoral-simulator` project on PyPI if it does not already exist.
 2. In PyPI project settings, add a Trusted Publisher for:
    `mukhes3/electoral_sim`
    workflow: `.github/workflows/publish.yml`

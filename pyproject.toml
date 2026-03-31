@@ -3,7 +3,7 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "electoral-sim"
+name = "electoral-simulator"
 version = "0.1.0"
 description = "A spatial voting simulator for comparing electoral systems"
 readme = { file = "README.md", content-type = "text/markdown" }
