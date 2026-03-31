@@ -6,7 +6,25 @@ build-backend = "setuptools.build_meta"
 name = "electoral-sim"
 version = "0.1.0"
 description = "A spatial voting simulator for comparing electoral systems"
+readme = { file = "README.md", content-type = "text/markdown" }
+license = "MIT"
 requires-python = ">=3.10"
+authors = [
+    { name = "Sumit Mukherjee" },
+]
+keywords = ["elections", "voting", "politics", "simulation", "social-choice"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Education",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+    "Topic :: Sociology",
+]
 dependencies = [
     "numpy>=1.24",
     "scipy>=1.10",
@@ -15,15 +33,23 @@ dependencies = [
     "matplotlib>=3.7",
     "seaborn>=0.12",
     "pandas>=2.0",
-    "pytest>=7.0",
 ]
 
 [project.scripts]
 electoral-sim = "electoral_sim.cli:main"
 
+[project.urls]
+Homepage = "https://github.com/mukhes3/electoral_sim"
+Repository = "https://github.com/mukhes3/electoral_sim"
+Issues = "https://github.com/mukhes3/electoral_sim/issues"
+
 [project.optional-dependencies]
-dev = ["jupyter", "ipykernel", "black", "ruff"]
+dev = ["jupyter", "ipykernel", "black", "ruff", "build", "twine", "pytest>=7.0"]
+test = ["pytest>=7.0"]
 
 [tool.setuptools.packages.find]
 where = ["."]
 include = ["electoral_sim*"]
+
+[tool.setuptools.package-data]
+electoral_sim = ["data/scenarios/*.yaml"]

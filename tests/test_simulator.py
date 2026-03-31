@@ -402,3 +402,11 @@ class TestScenarioLoading:
         cfg, e, c = load_scenario(p)
         assert e.n_voters == 200
         assert c.n_candidates == 2
+
+    def test_load_packaged_scenario_by_filename(self):
+        from electoral_sim.scenario import load_scenario
+
+        cfg, e, c = load_scenario("02_polarized_bimodal.yaml")
+        assert cfg["name"] == "Polarized Bimodal"
+        assert e.n_voters == cfg["n_voters"]
+        assert c.n_candidates >= 2

@@ -1,0 +1,59 @@
+name: "Three-Dimensional Primary Competition"
+description: >
+  A two-party electorate in three dimensions: economics, social values, and
+  institutional trust. The added dimension captures coalition structure that
+  is not visible in a flat left-right map and provides a built-in test case
+  for higher-dimensional simulation and PCA-based visualization.
+real_world_analog: "Electorates split by economics, culture, and trust in institutions"
+n_dims: 3
+n_voters: 6500
+dim_names:
+  - "economic (left-right)"
+  - "social (libertarian-authoritarian)"
+  - "institutional trust"
+
+electorate:
+  type: gaussian_mixture
+  components:
+    - weight: 0.34
+      mean: [0.24, 0.40, 0.70]
+      cov:
+        - [0.020, 0.004, 0.003]
+        - [0.004, 0.018, 0.002]
+        - [0.003, 0.002, 0.020]
+    - weight: 0.30
+      mean: [0.42, 0.62, 0.46]
+      cov:
+        - [0.022, 0.005, -0.002]
+        - [0.005, 0.020, -0.003]
+        - [-0.002, -0.003, 0.022]
+    - weight: 0.36
+      mean: [0.76, 0.52, 0.34]
+      cov:
+        - [0.024, -0.004, -0.003]
+        - [-0.004, 0.020, 0.002]
+        - [-0.003, 0.002, 0.020]
+
+candidates:
+  type: fixed
+  positions:
+    - name: "L-Civic-Left"
+      position: [0.18, 0.34, 0.80]
+    - name: "L-Center-Left"
+      position: [0.30, 0.48, 0.62]
+    - name: "L-Populist-Left"
+      position: [0.38, 0.66, 0.32]
+    - name: "R-Institutionalist"
+      position: [0.62, 0.46, 0.58]
+    - name: "R-Market-Right"
+      position: [0.76, 0.50, 0.36]
+    - name: "R-Anti-System"
+      position: [0.90, 0.66, 0.18]
+
+parties:
+  left:
+    name: "Left Party"
+    candidate_indices: [0, 1, 2]
+  right:
+    name: "Right Party"
+    candidate_indices: [3, 4, 5]

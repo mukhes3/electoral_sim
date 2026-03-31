@@ -1,0 +1,38 @@
+name: "Asymmetric Skewed"
+description: >
+  Unimodal but off-center, with a long tail toward the right. Mean and
+  geometric median diverge noticeably. Tests whether systems track the
+  median or are pulled toward the mean by the tail.
+real_world_analog: "Several Latin American countries, post-Soviet states"
+n_dims: 2
+n_voters: 5000
+dim_names: ["economic (left-right)", "social (libertarian-authoritarian)"]
+
+electorate:
+  type: gaussian_mixture
+  components:
+    - weight: 0.60
+      mean: [0.30, 0.45]
+      cov: [[0.025, 0.005], [0.005, 0.025]]
+    - weight: 0.25
+      mean: [0.55, 0.50]
+      cov: [[0.030, 0.005], [0.005, 0.020]]
+    - weight: 0.15
+      mean: [0.80, 0.60]
+      cov: [[0.020, 0.0], [0.0, 0.020]]
+
+candidates:
+  type: fixed
+  positions:
+    - name: "Radical Left"
+      position: [0.08, 0.35]
+    - name: "Left"
+      position: [0.22, 0.40]
+    - name: "Centre-Left"
+      position: [0.38, 0.45]
+    - name: "Centre"
+      position: [0.52, 0.50]
+    - name: "Right"
+      position: [0.70, 0.58]
+    - name: "Far-Right"
+      position: [0.88, 0.68]

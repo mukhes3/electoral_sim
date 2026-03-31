@@ -16,7 +16,7 @@ from electoral_sim.fractional import (
     fractional_ballot_systems,
 )
 from electoral_sim.metrics import compute_metrics
-from electoral_sim.scenario import load_scenario
+from electoral_sim.scenario import built_in_scenario_paths, load_scenario
 from electoral_sim.systems import SYSTEM_REGISTRY, ElectoralSystem, get_all_systems
 
 
@@ -224,9 +224,13 @@ def _list_systems_command(args: argparse.Namespace) -> int:
 
 
 def _list_scenarios_command(args: argparse.Namespace) -> int:
-    scenarios_dir = Path(args.scenarios_dir)
-    paths = sorted(scenarios_dir.glob("*.yaml"))
-    rows = [{"path": str(path), "name": path.stem} for path in paths]
+    if args.scenarios_dir:
+        scenarios_dir = Path(args.scenarios_dir)
+        paths = sorted(scenarios_dir.glob("*.yaml"))
+        rows = [{"path": str(path), "name": path.stem} for path in paths]
+    else:
+        paths = built_in_scenario_paths()
+        rows = [{"path": path.name, "name": path.stem} for path in paths]
 
     if args.format == "json":
         print(json.dumps(rows, indent=2, sort_keys=True))
@@ -306,8 +310,10 @@ def build_parser() -> argparse.ArgumentParser:
     list_scenarios_parser.add_argument(
         "scenarios_dir",
         nargs="?",
-        default="configs/scenarios",
-        help="Directory containing scenario YAML files.",
+        help=(
+            "Directory containing scenario YAML files. "
+            "If omitted, lists the built-in packaged scenarios."
+        ),
     )
     list_scenarios_parser.add_argument(
         "--format",

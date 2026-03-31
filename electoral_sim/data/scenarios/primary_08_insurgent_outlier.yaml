@@ -1,0 +1,47 @@
+name: "Insurgent Outlier Candidate"
+description: >
+  Most voters are clustered near pragmatic center-left and center-right
+  positions, but one party also contains a small, intense insurgent faction
+  with a candidate positioned far from the general electorate. This is useful
+  for studying spoiler-like primary dynamics under plurality.
+real_world_analog: "Primary electorates with a highly energized insurgent wing"
+n_dims: 2
+n_voters: 6000
+dim_names: ["economic (left-right)", "social (libertarian-authoritarian)"]
+
+electorate:
+  type: gaussian_mixture
+  components:
+    - weight: 0.40
+      mean: [0.30, 0.46]
+      cov: [[0.024, 0.004], [0.004, 0.022]]
+    - weight: 0.42
+      mean: [0.68, 0.56]
+      cov: [[0.022, -0.004], [-0.004, 0.022]]
+    - weight: 0.18
+      mean: [0.88, 0.84]
+      cov: [[0.010, 0.002], [0.002, 0.010]]
+
+candidates:
+  type: fixed
+  positions:
+    - name: "L-Progressive"
+      position: [0.18, 0.38]
+    - name: "L-Center-Left"
+      position: [0.30, 0.46]
+    - name: "L-Moderate"
+      position: [0.42, 0.52]
+    - name: "R-Moderate"
+      position: [0.60, 0.50]
+    - name: "R-Conservative"
+      position: [0.76, 0.62]
+    - name: "R-Insurgent"
+      position: [0.96, 0.92]
+
+parties:
+  left:
+    name: "Left Party"
+    candidate_indices: [0, 1, 2]
+  right:
+    name: "Right Party"
+    candidate_indices: [3, 4, 5]

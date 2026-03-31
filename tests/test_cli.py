@@ -62,3 +62,13 @@ def test_run_command_table_output_works_with_fractional_systems(capsys):
     output = capsys.readouterr().out
     assert "Plurality (FPTP)" in output
     assert "Fractional Ballot Discrete" in output
+
+
+def test_list_scenarios_defaults_to_packaged_scenarios(capsys):
+    exit_code = main(["list-scenarios", "--format", "json"])
+
+    assert exit_code == 0
+    output = capsys.readouterr().out
+    payload = json.loads(output)
+    paths = {item["path"] for item in payload}
+    assert "02_polarized_bimodal.yaml" in paths

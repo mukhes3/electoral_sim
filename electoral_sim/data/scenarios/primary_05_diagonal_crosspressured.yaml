@@ -1,0 +1,50 @@
+name: "Two-Party Diagonal Cross-Pressures"
+description: >
+  Voters are distributed across diagonal issue coalitions rather than a single
+  left-right line. The two parties each contain internally cross-pressured
+  factions, creating a setting where primary outcomes depend on how each side
+  resolves economic versus social cleavages.
+real_world_analog: "Coalitions split across economic and cultural axes"
+n_dims: 2
+n_voters: 6000
+dim_names: ["economic (left-right)", "social (libertarian-authoritarian)"]
+
+electorate:
+  type: gaussian_mixture
+  components:
+    - weight: 0.32
+      mean: [0.24, 0.72]
+      cov: [[0.018, -0.005], [-0.005, 0.018]]
+    - weight: 0.32
+      mean: [0.76, 0.28]
+      cov: [[0.018, -0.005], [-0.005, 0.018]]
+    - weight: 0.18
+      mean: [0.34, 0.30]
+      cov: [[0.016, 0.003], [0.003, 0.016]]
+    - weight: 0.18
+      mean: [0.66, 0.70]
+      cov: [[0.016, 0.003], [0.003, 0.016]]
+
+candidates:
+  type: fixed
+  positions:
+    - name: "L-Libertarian-Left"
+      position: [0.18, 0.78]
+    - name: "L-Blue-Labor"
+      position: [0.32, 0.58]
+    - name: "L-Communitarian-Center"
+      position: [0.42, 0.66]
+    - name: "R-Market-Liberal"
+      position: [0.58, 0.34]
+    - name: "R-Traditional-Right"
+      position: [0.72, 0.46]
+    - name: "R-Authoritarian-Right"
+      position: [0.84, 0.22]
+
+parties:
+  left:
+    name: "Left Party"
+    candidate_indices: [0, 1, 2]
+  right:
+    name: "Right Party"
+    candidate_indices: [3, 4, 5]
