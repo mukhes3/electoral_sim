@@ -85,6 +85,48 @@ def _mean_weights(distances: np.ndarray, sigma: float) -> np.ndarray:
     return _boltzmann_weights(distances, sigma).mean(axis=0)
 
 
+def _distances_from_positions(
+    preferences: np.ndarray,
+    candidates: CandidateSet,
+) -> np.ndarray:
+    """Compute voter-candidate Euclidean distances from explicit positions."""
+    preferences = np.asarray(preferences, dtype=float)
+    if preferences.ndim != 2:
+        raise ValueError("preferences must be a 2D array.")
+    if preferences.shape[1] != candidates.n_dims:
+        raise ValueError(
+            f"preferences have {preferences.shape[1]} dims, expected {candidates.n_dims}."
+        )
+    return np.linalg.norm(
+        preferences[:, None, :] - candidates.positions[None, :, :],
+        axis=2,
+    )
+
+
+def _resolve_fractional_distances(
+    ballots: BallotProfile,
+    candidates: CandidateSet,
+    reported_preferences: np.ndarray | None = None,
+) -> np.ndarray:
+    """
+    Return the distance matrix used by the fractional system.
+
+    Backward-compatible default:
+    - if ``reported_preferences`` is omitted, use the existing truthful
+      ``ballots.distances`` matrix.
+    """
+    if reported_preferences is None:
+        return ballots.distances
+
+    reported_preferences = np.asarray(reported_preferences, dtype=float)
+    if reported_preferences.shape != ballots.distances.shape[:1] + (candidates.n_dims,):
+        raise ValueError(
+            "reported_preferences must have shape "
+            f"({ballots.n_voters}, {candidates.n_dims}), got {reported_preferences.shape}."
+        )
+    return _distances_from_positions(reported_preferences, candidates)
+
+
 # ── Discrete variant ──────────────────────────────────────────────────────────
 
 class FractionalBallotDiscrete(ElectoralSystem):
@@ -116,9 +158,19 @@ class FractionalBallotDiscrete(ElectoralSystem):
     def parameters(self) -> dict:
         return {"sigma": self.sigma}
 
-    def run(self, ballots: BallotProfile, candidates: CandidateSet) -> ElectionResult:
+    def run(
+        self,
+        ballots: BallotProfile,
+        candidates: CandidateSet,
+        reported_preferences: np.ndarray | None = None,
+    ) -> ElectionResult:
         X      = candidates.positions                        # (n_candidates, n_dims)
-        mean_w = _mean_weights(ballots.distances, self.sigma) # (n_candidates,)
+        distances = _resolve_fractional_distances(
+            ballots,
+            candidates,
+            reported_preferences=reported_preferences,
+        )
+        mean_w = _mean_weights(distances, self.sigma) # (n_candidates,)
 
         # Centroid position in preference space
         centroid = mean_w @ X                               # (n_dims,)
@@ -144,12 +196,23 @@ class FractionalBallotDiscrete(ElectoralSystem):
                 "mean_weights":            mean_w,
                 "nearest_candidate":       candidates.labels[winner_idx],
                 "dist_centroid_to_winner": float(dist_to_centroid.min()),
+                "used_reported_preferences": reported_preferences is not None,
             },
         )
 
-    def weight_matrix(self, ballots: BallotProfile, candidates: CandidateSet) -> np.ndarray:
+    def weight_matrix(
+        self,
+        ballots: BallotProfile,
+        candidates: CandidateSet,
+        reported_preferences: np.ndarray | None = None,
+    ) -> np.ndarray:
         """Return full (n_voters, n_candidates) weight matrix for analysis."""
-        return _boltzmann_weights(ballots.distances, self.sigma)
+        distances = _resolve_fractional_distances(
+            ballots,
+            candidates,
+            reported_preferences=reported_preferences,
+        )
+        return _boltzmann_weights(distances, self.sigma)
 
 
 # ── Continuous variant ────────────────────────────────────────────────────────
@@ -189,9 +252,19 @@ class FractionalBallotContinuous(ElectoralSystem):
     def parameters(self) -> dict:
         return {"sigma": self.sigma}
 
-    def run(self, ballots: BallotProfile, candidates: CandidateSet) -> ElectionResult:
+    def run(
+        self,
+        ballots: BallotProfile,
+        candidates: CandidateSet,
+        reported_preferences: np.ndarray | None = None,
+    ) -> ElectionResult:
         X      = candidates.positions                         # (n_candidates, n_dims)
-        mean_w = _mean_weights(ballots.distances, self.sigma)  # (n_candidates,)
+        distances = _resolve_fractional_distances(
+            ballots,
+            candidates,
+            reported_preferences=reported_preferences,
+        )
+        mean_w = _mean_weights(distances, self.sigma)  # (n_candidates,)
 
         # Outcome position: convex combination of candidate positions
         outcome = mean_w @ X                                  # (n_dims,)
@@ -215,19 +288,40 @@ class FractionalBallotContinuous(ElectoralSystem):
                 "top_candidate": candidates.labels[winner_indices[0]],
                 "top_weight":    float(mean_w[winner_indices[0]]),
                 "entropy":       float(-np.sum(mean_w * np.log(mean_w + 1e-12))),
+                "used_reported_preferences": reported_preferences is not None,
             },
         )
 
-    def weight_matrix(self, ballots: BallotProfile, candidates: CandidateSet) -> np.ndarray:
+    def weight_matrix(
+        self,
+        ballots: BallotProfile,
+        candidates: CandidateSet,
+        reported_preferences: np.ndarray | None = None,
+    ) -> np.ndarray:
         """Return full (n_voters, n_candidates) weight matrix for analysis."""
-        return _boltzmann_weights(ballots.distances, self.sigma)
+        distances = _resolve_fractional_distances(
+            ballots,
+            candidates,
+            reported_preferences=reported_preferences,
+        )
+        return _boltzmann_weights(distances, self.sigma)
 
-    def policy_outcome(self, ballots: BallotProfile, candidates: CandidateSet) -> np.ndarray:
+    def policy_outcome(
+        self,
+        ballots: BallotProfile,
+        candidates: CandidateSet,
+        reported_preferences: np.ndarray | None = None,
+    ) -> np.ndarray:
         """
         Convenience method: return the effective policy position directly.
         Equivalent to result.outcome_position but without constructing ElectionResult.
         """
-        mean_w = _mean_weights(ballots.distances, self.sigma)
+        distances = _resolve_fractional_distances(
+            ballots,
+            candidates,
+            reported_preferences=reported_preferences,
+        )
+        mean_w = _mean_weights(distances, self.sigma)
         return mean_w @ candidates.positions
 
 

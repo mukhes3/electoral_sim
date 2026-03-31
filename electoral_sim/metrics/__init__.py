@@ -244,3 +244,9 @@ def summarize_monte_carlo(
             summary[system_name][f"{f}_mean"] = float(valid.mean()) if len(valid) else float("nan")
             summary[system_name][f"{f}_std"]  = float(valid.std())  if len(valid) else float("nan")
     return summary
+
+
+from electoral_sim.metrics.robustness import (  # noqa: E402
+    FractionalRobustnessMetrics,
+    compute_fractional_robustness_metrics,
+)
