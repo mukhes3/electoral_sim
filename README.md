@@ -353,32 +353,6 @@ print(run.robustness.outcome_shift, run.robustness.winner_changed)
 pytest tests/ -v
 ```
 
-## Releasing to PyPI
-
-This repository is set up for Trusted Publishing through GitHub Actions.
-
-The release flow is:
-
-1. Create the `electoral-simulator` project on PyPI if it does not already exist.
-2. In PyPI project settings, add a Trusted Publisher for:
-   `mukhes3/electoral_sim`
-   workflow: `.github/workflows/publish.yml`
-3. Commit and push this repository state to GitHub.
-4. Create and push a version tag such as `v0.1.0`.
-
-The publish workflow will:
-
-- build the source distribution and wheel
-- run `twine check`
-- publish to PyPI from GitHub Actions using OIDC, without storing a long-lived PyPI token in the repo
-
-Create and push a release tag like this:
-
-```bash
-git tag v0.1.0
-git push origin v0.1.0
-```
-
 ## Project Structure
 
 ```
