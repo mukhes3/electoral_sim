@@ -1,4 +1,15 @@
 """Utility helpers for the electoral simulator."""
+from electoral_sim.utils.centers import (
+    ElectorateCenters,
+    OutcomeCenterComparison,
+    compare_outcome_to_centers,
+    compute_electorate_centers,
+)
+from electoral_sim.utils.pairwise_majority import (
+    PairwiseMajorityResult,
+    pairwise_majority_between,
+    pairwise_majority_vote,
+)
 from electoral_sim.utils.viz_electorate import (
     plot_electorate,
     plot_election_result,
@@ -25,6 +36,13 @@ from electoral_sim.utils.social_choice_criteria import (
 )
 
 __all__ = [
+    "ElectorateCenters",
+    "OutcomeCenterComparison",
+    "compute_electorate_centers",
+    "compare_outcome_to_centers",
+    "PairwiseMajorityResult",
+    "pairwise_majority_vote",
+    "pairwise_majority_between",
     "plot_electorate",
     "plot_election_result",
     "plot_all_systems_spatial",
