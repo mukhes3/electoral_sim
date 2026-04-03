@@ -178,6 +178,31 @@ candidates:
   - {label: "Candidate C", position: [0.25, 0.35]}
 ```
 
+If you want to track demographic or coalition-level welfare, electorate
+components can also carry optional `group` labels. Multiple components may
+share the same label, which is useful when one group has internal ideological
+variation:
+
+```yaml
+electorate:
+  type: gaussian_mixture
+  components:
+    - weight: 0.30
+      mean: [0.20, 0.40]
+      cov: [[0.01, 0.00], [0.00, 0.01]]
+      group: Group A
+    - weight: 0.20
+      mean: [0.40, 0.60]
+      cov: [[0.01, 0.00], [0.00, 0.01]]
+      group: Group A
+    - weight: 0.50
+      mean: [0.75, 0.50]
+      cov: [[0.01, 0.00], [0.00, 0.01]]
+      group: Group B
+```
+
+When no `group` labels are provided, scenarios behave exactly as before.
+
 
 ## Voting Strategies
 
@@ -338,6 +363,43 @@ targeted_run = run_fractional_reporting_simulation(
 
 print(run.truthful_result.winner_indices, run.reported_result.winner_indices)
 print(run.robustness.outcome_shift, run.robustness.winner_changed)
+```
+
+## Group Welfare Metrics
+
+Electorates can optionally carry per-voter group labels, which makes it
+possible to evaluate how different electoral systems affect different groups
+through the same welfare lens used elsewhere in the package.
+
+This support is backward compatible:
+
+- if no group labels are present, the rest of the simulator works exactly as before
+- existing overall metrics such as `distance_to_median` and `mean_voter_distance` are unchanged
+- group-aware analysis is available only when you opt into labeled electorates
+
+Use `compute_group_metrics(...)` on an election result to get per-group mean
+distance to the outcome, worst-case distance, majority satisfaction, population
+share, welfare, and simple disparity summaries:
+
+```python
+from electoral_sim.ballots import BallotProfile
+from electoral_sim.metrics import compute_group_metrics
+from electoral_sim.systems import Plurality
+
+ballots = BallotProfile.from_preferences(electorate, candidates)
+result = Plurality().run(ballots, candidates)
+group_summary = compute_group_metrics(result, electorate, candidates)
+
+for group in group_summary.groups:
+    print(
+        group.group_name,
+        group.population_share,
+        group.mean_voter_distance,
+        group.majority_satisfaction,
+    )
+
+print(group_summary.max_mean_distance_gap)
+print(group_summary.min_group_welfare)
 ```
 
 ## Running Tests
