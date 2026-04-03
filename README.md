@@ -367,12 +367,6 @@ electoral_sim/
 configs/
 └── scenarios/      # Built-in scenario definitions
 notebooks/
-├── quickstart.ipynb
-├── electoral_systems_comparison.ipynb
-├── plurality_vs_irv_strategic_comparison.ipynb
-├── vote_splitting_and_spoiler_effect.ipynb
-├── arrows_impossibility_theorem.ipynb
-└── fractional_reporting_robustness.ipynb
 tests/              # Unit tests for simulator, visualization, and CLI behaviour
 ```
 
