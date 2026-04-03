@@ -22,9 +22,17 @@ class Electorate:
         Shape (n_voters, n_dims). Each row is a voter's preference vector.
     dim_names : list[str], optional
         Human-readable names for each dimension.
+    group_ids : np.ndarray, optional
+        Integer group identifier for each voter. Useful for demographic or
+        coalition-level analysis. If omitted, the electorate is treated as
+        unlabeled and all existing behavior is unchanged.
+    group_names : dict[int, str], optional
+        Mapping from integer group ids to display names.
     """
     preferences: np.ndarray
     dim_names: list[str] | None = None
+    group_ids: np.ndarray | None = None
+    group_names: dict[int, str] | None = None
 
     def __post_init__(self):
         assert self.preferences.ndim == 2, "preferences must be 2D (n_voters, n_dims)"
@@ -32,6 +40,26 @@ class Electorate:
             "All preferences must be in [0, 1]"
         if self.dim_names is None:
             self.dim_names = [f"dim_{i}" for i in range(self.n_dims)]
+        if self.group_ids is not None:
+            self.group_ids = np.asarray(self.group_ids, dtype=int)
+            assert self.group_ids.shape == (self.n_voters,), (
+                f"group_ids must have shape ({self.n_voters},), got {self.group_ids.shape}"
+            )
+            unique_ids = np.unique(self.group_ids)
+            if self.group_names is None:
+                self.group_names = {int(group_id): f"group_{int(group_id)}" for group_id in unique_ids}
+            else:
+                self.group_names = {
+                    int(group_id): str(name) for group_id, name in self.group_names.items()
+                }
+                missing = [int(group_id) for group_id in unique_ids if int(group_id) not in self.group_names]
+                if missing:
+                    raise ValueError(
+                        "group_names is missing labels for group ids: "
+                        + ", ".join(str(group_id) for group_id in missing)
+                    )
+        elif self.group_names is not None:
+            raise ValueError("group_names cannot be provided without group_ids")
 
     @property
     def n_voters(self) -> int:
@@ -40,6 +68,11 @@ class Electorate:
     @property
     def n_dims(self) -> int:
         return self.preferences.shape[1]
+
+    @property
+    def has_groups(self) -> bool:
+        """Whether voters carry optional group labels."""
+        return self.group_ids is not None
 
     def mean(self) -> np.ndarray:
         """Arithmetic mean of voter preferences. Shape: (n_dims,)."""
@@ -74,7 +107,27 @@ class Electorate:
         """Return a random subsample of n voters."""
         rng = rng or np.random.default_rng()
         idx = rng.choice(self.n_voters, size=n, replace=False)
-        return Electorate(self.preferences[idx], dim_names=self.dim_names)
+        group_ids = None if self.group_ids is None else self.group_ids[idx]
+        group_names = None if self.group_names is None else dict(self.group_names)
+        return Electorate(
+            self.preferences[idx],
+            dim_names=self.dim_names,
+            group_ids=group_ids,
+            group_names=group_names,
+        )
+
+    def group_indices(self) -> dict[int, np.ndarray]:
+        """Boolean masks for each labeled group in the electorate."""
+        if self.group_ids is None:
+            return {}
+        return {
+            int(group_id): self.group_ids == group_id
+            for group_id in np.unique(self.group_ids)
+        }
+
+    def group_labels(self) -> dict[int, str]:
+        """Return a copy of the id-to-name mapping for labeled groups."""
+        return {} if self.group_names is None else dict(self.group_names)
 
     def summary_statistics(self) -> dict:
         """
@@ -109,6 +162,7 @@ def gaussian_electorate(
     cov: np.ndarray | Sequence[Sequence[float]],
     rng: np.random.Generator | None = None,
     dim_names: list[str] | None = None,
+    group: str | None = None,
 ) -> Electorate:
     """Single Gaussian cluster, clipped to [0,1]^N."""
     rng = rng or np.random.default_rng()
@@ -116,7 +170,15 @@ def gaussian_electorate(
     cov = np.array(cov)
     samples = rng.multivariate_normal(mean, cov, size=n_voters)
     samples = np.clip(samples, 0.0, 1.0)
-    return Electorate(samples, dim_names=dim_names)
+    if group is None:
+        return Electorate(samples, dim_names=dim_names)
+    group_ids = np.zeros(n_voters, dtype=int)
+    return Electorate(
+        samples,
+        dim_names=dim_names,
+        group_ids=group_ids,
+        group_names={0: group},
+    )
 
 
 def gaussian_mixture_electorate(
@@ -145,16 +207,41 @@ def gaussian_mixture_electorate(
     weights /= weights.sum()
     counts = rng.multinomial(n_voters, weights)
 
+    group_labels = [component.get("group") for component in components]
+    use_groups = any(label is not None for label in group_labels)
+    group_name_to_id: dict[str, int] = {}
+    group_ids_list = []
     samples_list = []
-    for c, n in zip(components, counts):
+
+    for idx, (c, n) in enumerate(zip(components, counts)):
         if n == 0:
             continue
         mean = np.array(c["mean"])
         cov = np.array(c["cov"])
         s = rng.multivariate_normal(mean, cov, size=n)
         samples_list.append(s)
+        if use_groups:
+            group_name = c.get("group")
+            if group_name is None:
+                group_name = f"component_{idx}"
+            group_name = str(group_name)
+            group_id = group_name_to_id.setdefault(group_name, len(group_name_to_id))
+            group_ids_list.append(np.full(n, group_id, dtype=int))
 
     samples = np.clip(np.vstack(samples_list), 0.0, 1.0)
+    if use_groups:
+        group_ids = np.concatenate(group_ids_list)
+        order = rng.permutation(len(samples))
+        samples = samples[order]
+        group_ids = group_ids[order]
+        group_names = {group_id: name for name, group_id in group_name_to_id.items()}
+        return Electorate(
+            samples,
+            dim_names=dim_names,
+            group_ids=group_ids,
+            group_names=group_names,
+        )
+
     rng.shuffle(samples)  # randomize voter order
     return Electorate(samples, dim_names=dim_names)
 
@@ -164,11 +251,20 @@ def uniform_electorate(
     n_dims: int,
     rng: np.random.Generator | None = None,
     dim_names: list[str] | None = None,
+    group: str | None = None,
 ) -> Electorate:
     """Uniformly distributed voters over [0,1]^N."""
     rng = rng or np.random.default_rng()
     samples = rng.uniform(0.0, 1.0, size=(n_voters, n_dims))
-    return Electorate(samples, dim_names=dim_names)
+    if group is None:
+        return Electorate(samples, dim_names=dim_names)
+    group_ids = np.zeros(n_voters, dtype=int)
+    return Electorate(
+        samples,
+        dim_names=dim_names,
+        group_ids=group_ids,
+        group_names={0: group},
+    )
 
 
 def from_config(config: dict, rng: np.random.Generator | None = None) -> Electorate:
@@ -183,12 +279,26 @@ def from_config(config: dict, rng: np.random.Generator | None = None) -> Elector
 
     if etype == "gaussian":
         ec = config["electorate"]
-        return gaussian_electorate(n_voters, ec["mean"], ec["cov"], rng, dim_names)
+        return gaussian_electorate(
+            n_voters,
+            ec["mean"],
+            ec["cov"],
+            rng,
+            dim_names,
+            group=ec.get("group"),
+        )
     elif etype == "gaussian_mixture":
         ec = config["electorate"]
         return gaussian_mixture_electorate(n_voters, ec["components"], rng, dim_names)
     elif etype == "uniform":
         n_dims = config.get("n_dims", 2)
-        return uniform_electorate(n_voters, n_dims, rng, dim_names)
+        ec = config["electorate"]
+        return uniform_electorate(
+            n_voters,
+            n_dims,
+            rng,
+            dim_names,
+            group=ec.get("group"),
+        )
     else:
         raise ValueError(f"Unknown electorate type: {etype}")

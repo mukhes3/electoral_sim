@@ -250,3 +250,8 @@ from electoral_sim.metrics.robustness import (  # noqa: E402
     FractionalRobustnessMetrics,
     compute_fractional_robustness_metrics,
 )
+from electoral_sim.metrics.groups import (  # noqa: E402
+    GroupMetricsSummary,
+    GroupOutcomeMetrics,
+    compute_group_metrics,
+)
