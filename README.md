@@ -91,8 +91,10 @@ The repository includes several notebooks for different entry points:
 | `notebooks/electoral_systems_comparison.ipynb` | Main comparison notebook for the built-in scenarios and paper-style figures |
 | `notebooks/plurality_vs_irv_strategic_comparison.ipynb` | Compares closed-primary plurality against alternative primary/general-election pipelines under different strategy assumptions |
 | `notebooks/vote_splitting_and_spoiler_effect.ipynb` | Explores vote splitting, spoiler candidates, and which systems are most vulnerable |
-| `notebooks/arrows_impossibility_theorem.ipynb` | Explains Arrow's impossibility theorem  |
+| `notebooks/arrows_impossibility_theorem.ipynb` | Explains Arrow's impossibility theorem using spatial examples and simple criterion checks |
 | `notebooks/fractional_reporting_robustness.ipynb` | Examines how the fractional system behaves under honest, noisy, biased, and adversarial spatial reporting, with plurality as a reference point |
+| `notebooks/median_voter_theorem_higher_dimensions.ipynb` | Introduces the median voter theorem in one dimension and shows how it weakens as spatial competition moves into higher dimensions |
+| `notebooks/primaries_moderation_backfire.ipynb` | Studies when primaries pull nominees toward the electorate's center and when they instead make outcomes less moderate |
 
 
 ## CLI Runner
