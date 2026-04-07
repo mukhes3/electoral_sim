@@ -1,0 +1,1886 @@
+\documentclass[11pt]{article}
+
+    \usepackage[breakable]{tcolorbox}
+    \usepackage{parskip} % Stop auto-indenting (to mimic markdown behaviour)
+    
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % Keep aspect ratio if custom image width or height is specified
+    \setkeys{Gin}{keepaspectratio}
+    % Maintain compatibility with old templates. Remove in nbconvert 6.0
+    \let\Oldincludegraphics\includegraphics
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionFormat{nocaption}{}
+    \captionsetup{format=nocaption,aboveskip=0pt,belowskip=0pt}
+
+    \usepackage{float}
+    \floatplacement{figure}{H} % forces figures to be placed at the correct location
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+
+    \usepackage{iftex}
+    \ifPDFTeX
+        \usepackage[T1]{fontenc}
+        \IfFileExists{alphabeta.sty}{
+              \usepackage{alphabeta}
+          }{
+              \usepackage[mathletters]{ucs}
+              \usepackage[utf8x]{inputenc}
+          }
+    \else
+        \usepackage{fontspec}
+        \usepackage{unicode-math}
+    \fi
+
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics
+                         % to support a larger range
+    \makeatletter % fix for old versions of grffile with XeLaTeX
+    \@ifpackagelater{grffile}{2019/11/01}
+    {
+      % Do nothing on new versions
+    }
+    {
+      \def\Gread@@xetex#1{%
+        \IfFileExists{"\Gin@base".bb}%
+        {\Gread@eps{\Gin@base.bb}}%
+        {\Gread@@xetex@aux#1}%
+      }
+    }
+    \makeatother
+    \usepackage[Export]{adjustbox} % Used to constrain images to a maximum size
+    \adjustboxset{max size={0.9\linewidth}{0.9\paperheight}}
+
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    % The default LaTeX title has an obnoxious amount of whitespace. By default,
+    % titling removes some of it. It also provides customization options.
+    \usepackage{titling}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage{array}     % table support for pandoc >= 2.11.3
+    \usepackage{calc}      % table minipage width calculation for pandoc >= 2.11.1
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    \usepackage{soul}      % strikethrough (\st) support for pandoc >= 3.0.0
+    \usepackage{mathrsfs}
+    
+
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+    \definecolor{ansi-default-inverse-fg}{HTML}{FFFFFF}
+    \definecolor{ansi-default-inverse-bg}{HTML}{000000}
+
+    % common color for the border for error outputs.
+    \definecolor{outerrorbackground}{HTML}{FFDFDF}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \makeatletter
+    \newsavebox\pandoc@box
+    \newcommand*\pandocbounded[1]{%
+      \sbox\pandoc@box{#1}%
+      % scaling factors for width and height
+      \Gscale@div\@tempa\textheight{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+      \Gscale@div\@tempb\linewidth{\wd\pandoc@box}%
+      % select the smaller of both
+      \ifdim\@tempb\p@<\@tempa\p@
+        \let\@tempa\@tempb
+      \fi
+      % scaling accordingly (\@tempa < 1)
+      \ifdim\@tempa\p@<\p@
+        \scalebox{\@tempa}{\usebox\pandoc@box}%
+      % scaling not needed, use as it is
+      \else
+        \usebox{\pandoc@box}%
+      \fi
+    }
+    \makeatother
+
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatibility definitions
+    \def\gt{>}
+    \def\lt{<}
+    \let\Oldtex\TeX
+    \let\Oldlatex\LaTeX
+    \renewcommand{\TeX}{\textrm{\Oldtex}}
+    \renewcommand{\LaTeX}{\textrm{\Oldlatex}}
+    % Document parameters
+    % Document title
+    \title{party\_primaries\_turnout\_strategy\_space}
+    
+    
+    
+    
+    
+    
+    
+% Pygments definitions
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\@namedef{PY@tok@w}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\@namedef{PY@tok@c}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cp}{\def\PY@tc##1{\textcolor[rgb]{0.61,0.40,0.00}{##1}}}
+\@namedef{PY@tok@k}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kt}{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\@namedef{PY@tok@o}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ow}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@nb}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nf}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@nn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@ne}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.80,0.25,0.22}{##1}}}
+\@namedef{PY@tok@nv}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@no}{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\@namedef{PY@tok@nl}{\def\PY@tc##1{\textcolor[rgb]{0.46,0.46,0.00}{##1}}}
+\@namedef{PY@tok@ni}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@na}{\def\PY@tc##1{\textcolor[rgb]{0.41,0.47,0.13}{##1}}}
+\@namedef{PY@tok@nt}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@nd}{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\@namedef{PY@tok@s}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sd}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@si}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@se}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.36,0.12}{##1}}}
+\@namedef{PY@tok@sr}{\def\PY@tc##1{\textcolor[rgb]{0.64,0.35,0.47}{##1}}}
+\@namedef{PY@tok@ss}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sx}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@m}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@gh}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gu}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\@namedef{PY@tok@gd}{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\@namedef{PY@tok@gi}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.52,0.00}{##1}}}
+\@namedef{PY@tok@gr}{\def\PY@tc##1{\textcolor[rgb]{0.89,0.00,0.00}{##1}}}
+\@namedef{PY@tok@ge}{\let\PY@it=\textit}
+\@namedef{PY@tok@gs}{\let\PY@bf=\textbf}
+\@namedef{PY@tok@gp}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\@namedef{PY@tok@go}{\def\PY@tc##1{\textcolor[rgb]{0.44,0.44,0.44}{##1}}}
+\@namedef{PY@tok@gt}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\@namedef{PY@tok@err}{\def\PY@bc##1{{\setlength{\fboxsep}{\string -\fboxrule}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}}
+\@namedef{PY@tok@kc}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kd}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kn}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@kr}{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@bp}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\@namedef{PY@tok@fm}{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\@namedef{PY@tok@vc}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vg}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vi}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@vm}{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\@namedef{PY@tok@sa}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sb}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sc}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@dl}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s2}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@sh}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@s1}{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\@namedef{PY@tok@mb}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mf}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mh}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mi}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@il}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@mo}{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\@namedef{PY@tok@ch}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cm}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cpf}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@c1}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+\@namedef{PY@tok@cs}{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.24,0.48,0.48}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % For linebreaks inside Verbatim environment from package fancyvrb.
+    \makeatletter
+        \newbox\Wrappedcontinuationbox
+        \newbox\Wrappedvisiblespacebox
+        \newcommand*\Wrappedvisiblespace {\textcolor{red}{\textvisiblespace}}
+        \newcommand*\Wrappedcontinuationsymbol {\textcolor{red}{\llap{\tiny$\m@th\hookrightarrow$}}}
+        \newcommand*\Wrappedcontinuationindent {3ex }
+        \newcommand*\Wrappedafterbreak {\kern\Wrappedcontinuationindent\copy\Wrappedcontinuationbox}
+        % Take advantage of the already applied Pygments mark-up to insert
+        % potential linebreaks for TeX processing.
+        %        {, <, #, %, $, ' and ": go to next line.
+        %        _, }, ^, &, >, - and ~: stay at end of broken line.
+        % Use of \textquotesingle for straight quote.
+        \newcommand*\Wrappedbreaksatspecials {%
+            \def\PYGZus{\discretionary{\char`\_}{\Wrappedafterbreak}{\char`\_}}%
+            \def\PYGZob{\discretionary{}{\Wrappedafterbreak\char`\{}{\char`\{}}%
+            \def\PYGZcb{\discretionary{\char`\}}{\Wrappedafterbreak}{\char`\}}}%
+            \def\PYGZca{\discretionary{\char`\^}{\Wrappedafterbreak}{\char`\^}}%
+            \def\PYGZam{\discretionary{\char`\&}{\Wrappedafterbreak}{\char`\&}}%
+            \def\PYGZlt{\discretionary{}{\Wrappedafterbreak\char`\<}{\char`\<}}%
+            \def\PYGZgt{\discretionary{\char`\>}{\Wrappedafterbreak}{\char`\>}}%
+            \def\PYGZsh{\discretionary{}{\Wrappedafterbreak\char`\#}{\char`\#}}%
+            \def\PYGZpc{\discretionary{}{\Wrappedafterbreak\char`\%}{\char`\%}}%
+            \def\PYGZdl{\discretionary{}{\Wrappedafterbreak\char`\$}{\char`\$}}%
+            \def\PYGZhy{\discretionary{\char`\-}{\Wrappedafterbreak}{\char`\-}}%
+            \def\PYGZsq{\discretionary{}{\Wrappedafterbreak\textquotesingle}{\textquotesingle}}%
+            \def\PYGZdq{\discretionary{}{\Wrappedafterbreak\char`\"}{\char`\"}}%
+            \def\PYGZti{\discretionary{\char`\~}{\Wrappedafterbreak}{\char`\~}}%
+        }
+        % Some characters . , ; ? ! / are not pygmentized.
+        % This macro makes them "active" and they will insert potential linebreaks
+        \newcommand*\Wrappedbreaksatpunct {%
+            \lccode`\~`\.\lowercase{\def~}{\discretionary{\hbox{\char`\.}}{\Wrappedafterbreak}{\hbox{\char`\.}}}%
+            \lccode`\~`\,\lowercase{\def~}{\discretionary{\hbox{\char`\,}}{\Wrappedafterbreak}{\hbox{\char`\,}}}%
+            \lccode`\~`\;\lowercase{\def~}{\discretionary{\hbox{\char`\;}}{\Wrappedafterbreak}{\hbox{\char`\;}}}%
+            \lccode`\~`\:\lowercase{\def~}{\discretionary{\hbox{\char`\:}}{\Wrappedafterbreak}{\hbox{\char`\:}}}%
+            \lccode`\~`\?\lowercase{\def~}{\discretionary{\hbox{\char`\?}}{\Wrappedafterbreak}{\hbox{\char`\?}}}%
+            \lccode`\~`\!\lowercase{\def~}{\discretionary{\hbox{\char`\!}}{\Wrappedafterbreak}{\hbox{\char`\!}}}%
+            \lccode`\~`\/\lowercase{\def~}{\discretionary{\hbox{\char`\/}}{\Wrappedafterbreak}{\hbox{\char`\/}}}%
+            \catcode`\.\active
+            \catcode`\,\active
+            \catcode`\;\active
+            \catcode`\:\active
+            \catcode`\?\active
+            \catcode`\!\active
+            \catcode`\/\active
+            \lccode`\~`\~
+        }
+    \makeatother
+
+    \let\OriginalVerbatim=\Verbatim
+    \makeatletter
+    \renewcommand{\Verbatim}[1][1]{%
+        %\parskip\z@skip
+        \sbox\Wrappedcontinuationbox {\Wrappedcontinuationsymbol}%
+        \sbox\Wrappedvisiblespacebox {\FV@SetupFont\Wrappedvisiblespace}%
+        \def\FancyVerbFormatLine ##1{\hsize\linewidth
+            \vtop{\raggedright\hyphenpenalty\z@\exhyphenpenalty\z@
+                \doublehyphendemerits\z@\finalhyphendemerits\z@
+                \strut ##1\strut}%
+        }%
+        % If the linebreak is at a space, the latter will be displayed as visible
+        % space at end of first line, and a continuation symbol starts next line.
+        % Stretch/shrink are however usually zero for typewriter font.
+        \def\FV@Space {%
+            \nobreak\hskip\z@ plus\fontdimen3\font minus\fontdimen4\font
+            \discretionary{\copy\Wrappedvisiblespacebox}{\Wrappedafterbreak}
+            {\kern\fontdimen2\font}%
+        }%
+
+        % Allow breaks at special characters using \PYG... macros.
+        \Wrappedbreaksatspecials
+        % Breaks at punctuation characters . , ; ? ! and / need catcode=\active
+        \OriginalVerbatim[#1,codes*=\Wrappedbreaksatpunct]%
+    }
+    \makeatother
+
+    % Exact colors from NB
+    \definecolor{incolor}{HTML}{303F9F}
+    \definecolor{outcolor}{HTML}{D84315}
+    \definecolor{cellborder}{HTML}{CFCFCF}
+    \definecolor{cellbackground}{HTML}{F7F7F7}
+
+    % prompt
+    \makeatletter
+    \newcommand{\boxspacing}{\kern\kvtcb@left@rule\kern\kvtcb@boxsep}
+    \makeatother
+    \newcommand{\prompt}[4]{
+        {\ttfamily\llap{{\color{#2}[#3]:\hspace{3pt}#4}}\vspace{-\baselineskip}}
+    }
+    
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+\begin{document}
+    
+    \maketitle
+    
+    
+
+    
+    \section{How Do Parties, Primaries, Turnout, and Strategy
+Interact?}\label{how-do-parties-primaries-turnout-and-strategy-interact}
+
+This notebook studies how election outcomes change when several
+politically meaningful ingredients move at the same time: party sorting,
+primary rules, turnout, strategic voting, group size, candidate supply,
+and the general-election system.
+
+The underlying comparison space is
+
+\texttt{electorate\ ×\ primaries\ ×\ turnout\ ×\ strategy\ ×\ majority:minority\ ratio\ ×\ candidate\ slate\ ×\ system}
+
+but the notebook does not run the full discrete cross-product. Instead
+it uses a \textbf{mixed Latin hypercube design}. That means the notebook
+spreads sampled cases evenly over the continuous parts of the setup,
+while still drawing from the discrete institutional choices like the
+primary pipeline, turnout profile, strategy profile, and candidate
+slate. Later, it uses simple regression summaries to ask which
+ingredients are most associated with changes in welfare.
+
+Plurality stays in the notebook throughout as the baseline. That is
+important here. The point is not just to compare systems to one another
+in the abstract, but to see when they do better or worse than the most
+familiar baseline under the same sampled political setting.
+
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Imports and configuration}\label{imports-and-configuration}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{21}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k+kn}{import} \PY{n+nn}{importlib}
+\PY{k+kn}{import} \PY{n+nn}{math}
+\PY{k+kn}{import} \PY{n+nn}{sys}
+\PY{k+kn}{from} \PY{n+nn}{pathlib} \PY{k+kn}{import} \PY{n}{Path}
+
+\PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
+\PY{k+kn}{from} \PY{n+nn}{IPython}\PY{n+nn}{.}\PY{n+nn}{display} \PY{k+kn}{import} \PY{n}{Markdown}\PY{p}{,} \PY{n}{display}
+\PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+\PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+\PY{k+kn}{import} \PY{n+nn}{seaborn} \PY{k}{as} \PY{n+nn}{sns}
+
+\PY{n}{cwd} \PY{o}{=} \PY{n}{Path}\PY{o}{.}\PY{n}{cwd}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{resolve}\PY{p}{(}\PY{p}{)}
+\PY{k}{if} \PY{p}{(}\PY{n}{cwd} \PY{o}{/} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{configs}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{o}{.}\PY{n}{exists}\PY{p}{(}\PY{p}{)} \PY{o+ow}{and} \PY{p}{(}\PY{n}{cwd} \PY{o}{/} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{electoral\PYZus{}sim}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{o}{.}\PY{n}{exists}\PY{p}{(}\PY{p}{)}\PY{p}{:}
+    \PY{n}{REPO\PYZus{}ROOT} \PY{o}{=} \PY{n}{cwd}
+\PY{k}{else}\PY{p}{:}
+    \PY{n}{REPO\PYZus{}ROOT} \PY{o}{=} \PY{n}{cwd}\PY{o}{.}\PY{n}{parent}
+\PY{k}{if} \PY{n+nb}{str}\PY{p}{(}\PY{n}{REPO\PYZus{}ROOT}\PY{p}{)} \PY{o+ow}{not} \PY{o+ow}{in} \PY{n}{sys}\PY{o}{.}\PY{n}{path}\PY{p}{:}
+    \PY{n}{sys}\PY{o}{.}\PY{n}{path}\PY{o}{.}\PY{n}{insert}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{n+nb}{str}\PY{p}{(}\PY{n}{REPO\PYZus{}ROOT}\PY{p}{)}\PY{p}{)}
+
+\PY{k+kn}{import} \PY{n+nn}{notebooks}\PY{n+nn}{.}\PY{n+nn}{helpers}\PY{n+nn}{.}\PY{n+nn}{party\PYZus{}primary\PYZus{}strategy\PYZus{}space} \PY{k}{as} \PY{n+nn}{party\PYZus{}space}
+\PY{n}{party\PYZus{}space} \PY{o}{=} \PY{n}{importlib}\PY{o}{.}\PY{n}{reload}\PY{p}{(}\PY{n}{party\PYZus{}space}\PY{p}{)}
+
+\PY{n}{RATIO\PYZus{}ORDER} \PY{o}{=} \PY{n}{party\PYZus{}space}\PY{o}{.}\PY{n}{RATIO\PYZus{}ORDER}
+\PY{n}{ELECTORATE\PYZus{}ORDER} \PY{o}{=} \PY{n}{party\PYZus{}space}\PY{o}{.}\PY{n}{ELECTORATE\PYZus{}ORDER}
+\PY{n}{PRIMARY\PYZus{}ORDER} \PY{o}{=} \PY{n}{party\PYZus{}space}\PY{o}{.}\PY{n}{PRIMARY\PYZus{}ORDER}
+\PY{n}{TURNOUT\PYZus{}ORDER} \PY{o}{=} \PY{n}{party\PYZus{}space}\PY{o}{.}\PY{n}{TURNOUT\PYZus{}ORDER}
+\PY{n}{STRATEGY\PYZus{}ORDER} \PY{o}{=} \PY{n}{party\PYZus{}space}\PY{o}{.}\PY{n}{STRATEGY\PYZus{}ORDER}
+\PY{n}{SLATE\PYZus{}ORDER} \PY{o}{=} \PY{n}{party\PYZus{}space}\PY{o}{.}\PY{n}{SLATE\PYZus{}ORDER}
+\PY{n}{SYSTEM\PYZus{}ORDER} \PY{o}{=} \PY{n}{party\PYZus{}space}\PY{o}{.}\PY{n}{SYSTEM\PYZus{}ORDER}
+\PY{n}{DISPLAY\PYZus{}LABELS} \PY{o}{=} \PY{n}{party\PYZus{}space}\PY{o}{.}\PY{n}{DISPLAY\PYZus{}LABELS}
+
+\PY{n}{build\PYZus{}party\PYZus{}positions} \PY{o}{=} \PY{n}{party\PYZus{}space}\PY{o}{.}\PY{n}{build\PYZus{}party\PYZus{}positions}
+\PY{n}{build\PYZus{}grouped\PYZus{}electorate} \PY{o}{=} \PY{n}{party\PYZus{}space}\PY{o}{.}\PY{n}{build\PYZus{}grouped\PYZus{}electorate}
+\PY{n}{build\PYZus{}candidate\PYZus{}slate} \PY{o}{=} \PY{n}{party\PYZus{}space}\PY{o}{.}\PY{n}{build\PYZus{}candidate\PYZus{}slate}
+\PY{n}{plot\PYZus{}party\PYZus{}snapshot} \PY{o}{=} \PY{n}{party\PYZus{}space}\PY{o}{.}\PY{n}{plot\PYZus{}party\PYZus{}snapshot}
+\PY{n}{full\PYZus{}space\PYZus{}helper\PYZus{}overview} \PY{o}{=} \PY{n}{party\PYZus{}space}\PY{o}{.}\PY{n}{full\PYZus{}space\PYZus{}helper\PYZus{}overview}
+\PY{n}{mixed\PYZus{}lhs\PYZus{}helper\PYZus{}overview} \PY{o}{=} \PY{n}{party\PYZus{}space}\PY{o}{.}\PY{n}{mixed\PYZus{}lhs\PYZus{}helper\PYZus{}overview}
+\PY{n}{sample\PYZus{}mixed\PYZus{}latin\PYZus{}hypercube\PYZus{}design} \PY{o}{=} \PY{n}{party\PYZus{}space}\PY{o}{.}\PY{n}{sample\PYZus{}mixed\PYZus{}latin\PYZus{}hypercube\PYZus{}design}
+\PY{n}{plot\PYZus{}mixed\PYZus{}lhs\PYZus{}parameter\PYZus{}coverage} \PY{o}{=} \PY{n}{party\PYZus{}space}\PY{o}{.}\PY{n}{plot\PYZus{}mixed\PYZus{}lhs\PYZus{}parameter\PYZus{}coverage}
+\PY{n}{run\PYZus{}mixed\PYZus{}lhs\PYZus{}grid} \PY{o}{=} \PY{n}{party\PYZus{}space}\PY{o}{.}\PY{n}{run\PYZus{}mixed\PYZus{}lhs\PYZus{}grid}
+
+\PY{n}{sns}\PY{o}{.}\PY{n}{set\PYZus{}theme}\PY{p}{(}\PY{n}{style}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{whitegrid}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{pd}\PY{o}{.}\PY{n}{set\PYZus{}option}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{display.max\PYZus{}rows}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+m+mi}{200}\PY{p}{)}
+\PY{n}{pd}\PY{o}{.}\PY{n}{set\PYZus{}option}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{display.max\PYZus{}columns}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+m+mi}{200}\PY{p}{)}
+
+\PY{n}{BASE\PYZus{}SEED} \PY{o}{=} \PY{l+m+mi}{42}
+\PY{n}{N\PYZus{}CASES} \PY{o}{=} \PY{l+m+mi}{1000}
+\PY{n}{N\PYZus{}VOTERS} \PY{o}{=} \PY{l+m+mi}{900}
+\PY{n}{DIM\PYZus{}NAMES} \PY{o}{=} \PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{economic}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{social}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Preliminary refresher}\label{preliminary-refresher}
+
+The notebook uses the same spatial interpretation as the rest of the
+repo. Voters, candidates, and party anchors all live in the same
+two-dimensional map. Closer points mean greater ideological similarity.
+
+There are three layers to keep in mind:
+
+\begin{itemize}
+\tightlist
+\item
+  voters and candidates are attached to parties by ideological
+  proximity,
+\item
+  the primary pipeline may remove candidates before the general
+  election,
+\item
+  and the final electoral system chooses an outcome from the candidates
+  who remain.
+\end{itemize}
+
+If the final winning position is \(y\) and voter \(i\) is at \(x_i\),
+then this notebook defines welfare as negative mean distance to the
+winner. For the full electorate,
+
+\[
+W_{\mathrm{agg}} = - \frac{1}{N} \sum_{i=1}^{N} \lVert x_i - y \rVert_2.
+\]
+
+The same idea is used for the majority and minority groups separately:
+
+\[
+W_{\mathrm{maj}} = - \frac{1}{N_{\mathrm{maj}}} \sum_{i \in \mathrm{maj}} \lVert x_i - y \rVert_2,
+\]
+
+\[
+W_{\mathrm{min}} = - \frac{1}{N_{\mathrm{min}}} \sum_{i \in \mathrm{min}} \lVert x_i - y \rVert_2.
+\]
+
+Because welfare is negative distance, values closer to zero are better.
+The notebook also tracks distance from the electorate geometric median.
+If the winner is \(y\) and the electorate median is \(m\), then
+
+\[
+d_{\mathrm{median}} = \lVert y - m \rVert_2.
+\]
+
+The main comparison with primaries is a matched no-primary baseline. Let
+\(Z\) collect all the other ingredients in a sampled case: electorate
+family, turnout profile, strategy profile, majority share, candidate
+slate, and the intensity parameters. For any metric \(M\), system \(s\),
+and primary pipeline \(p\), define
+
+\[
+\Delta_M(s, p) = \mathbb{E}_{Z}\left[M(s, p, Z) - M(s, \text{No primary}, Z)\right].
+\]
+
+So the object of interest is not just the raw performance of a method
+with a primary. It is the average change caused by introducing that
+primary, after marginalizing over the rest of the sampled political
+setting. In the notebook, this expectation is estimated by averaging the
+matched within-case differences over the sampled design.
+
+Because welfare is defined as negative distance, the signs of the
+welfare deltas are easy to read. A positive \(\Delta_M(s, p)\) means the
+primary pipeline improved that metric relative to the matched no-primary
+baseline. A negative value means the pipeline made it worse. Later, when
+systems are compared directly to plurality, the notebook uses the same
+kind of matched-within-case comparison again, but with plurality as the
+reference point instead of no primary.
+
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Which systems are included
+here}\label{which-systems-are-included-here}
+
+This notebook keeps only systems that can be compared under the same
+broad family of strategic stress tests:
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{Plurality}
+\item
+  \texttt{IRV}
+\item
+  \texttt{Approval}
+\item
+  \texttt{Score}
+\item
+  \texttt{Condorcet}
+\end{itemize}
+
+Plurality stays throughout as the baseline.
+
+Some systems are left out on purpose. \texttt{Party-list\ PR},
+\texttt{MMP}, and the \texttt{Fractional} system do not line up cleanly
+with this notebook's structure. This notebook is about
+candidate-centered primary pipelines feeding into a general election,
+with family-matched strategic voting models. Legislative seat-allocation
+systems and fractional-outcome systems would need a different
+experimental design, so including them here would blur the comparison
+rather than strengthen it.
+
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{The sampled design}\label{the-sampled-design}
+
+The sampled cases vary the same core ingredients as the full conceptual
+space, but they do it with a mixed Latin hypercube instead of a
+brute-force grid. The continuous pieces are:
+
+\begin{itemize}
+\tightlist
+\item
+  majority share,
+\item
+  turnout intensity,
+\item
+  strategy intensity.
+\end{itemize}
+
+The sampled categorical pieces are:
+
+\begin{itemize}
+\tightlist
+\item
+  electorate family,
+\item
+  primary pipeline,
+\item
+  turnout profile,
+\item
+  strategy profile,
+\item
+  candidate slate.
+\end{itemize}
+
+A Latin hypercube design starts from the unit cube. If there are \(d\)
+continuous variables and the notebook wants \(N\) sampled cases, then
+each axis is divided into \(N\) equally sized intervals. For continuous
+coordinate \(j\), those intervals are
+
+\[
+I_{k,j} = \left[\frac{k-1}{N}, \frac{k}{N}\right), \qquad k = 1, \dots, N.
+\]
+
+The design then chooses one sampled point from each interval on each
+axis, and permutes those interval choices across dimensions. That gives
+a matrix of sampled points
+
+\[
+u_i = (u_{i1}, \dots, u_{id}) \in [0,1]^d, \qquad i = 1, \dots, N,
+\]
+
+with the key property that every marginal coordinate covers the full
+range instead of bunching up in just one corner. In plain language, each
+continuous variable gets spread out deliberately, while the joint design
+still mixes those variables together.
+
+This notebook uses a mixed version of that idea. The three continuous
+coordinates are mapped from \([0,1]\) into meaningful parameter ranges
+for majority share, turnout intensity, and strategy intensity. Separate
+sampled coordinates are also binned into named categories for electorate
+family, primary pipeline, turnout profile, strategy profile, and
+candidate slate. Each sampled case is then evaluated under all five
+electoral systems, so plurality can still serve as a within-case
+baseline.
+
+This is useful because the full cross-product would explode quickly,
+while simple random sampling can leave large holes. A mixed Latin
+hypercube is a middle ground: it does not evaluate every possible
+combination, but it covers the space much more evenly than a naive
+random draw.
+
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Helper functions}\label{helper-functions}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{22}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{helper\PYZus{}names} \PY{o}{=} \PY{p}{[}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mixed\PYZus{}lhs\PYZus{}helper\PYZus{}overview}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{sample\PYZus{}mixed\PYZus{}latin\PYZus{}hypercube\PYZus{}design}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{plot\PYZus{}mixed\PYZus{}lhs\PYZus{}parameter\PYZus{}coverage}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{run\PYZus{}mixed\PYZus{}lhs\PYZus{}grid}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{build\PYZus{}party\PYZus{}positions}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{build\PYZus{}grouped\PYZus{}electorate}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{build\PYZus{}candidate\PYZus{}slate}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{plot\PYZus{}party\PYZus{}snapshot}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+\PY{p}{]}
+
+\PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{imported helper}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{helper\PYZus{}names}\PY{p}{\PYZcb{}}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{22}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+                       imported helper
+0            mixed\_lhs\_helper\_overview
+1  sample\_mixed\_latin\_hypercube\_design
+2    plot\_mixed\_lhs\_parameter\_coverage
+3                   run\_mixed\_lhs\_grid
+4                build\_party\_positions
+5             build\_grouped\_electorate
+6                build\_candidate\_slate
+7                  plot\_party\_snapshot
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Notebook-local display
+helpers}\label{notebook-local-display-helpers}
+
+The notebook-specific simulation logic lives in
+\texttt{notebooks/helpers/party\_primary\_strategy\_space.py}. The next
+cell only defines a few small display helpers, so the rest of the
+notebook can stay focused on the sampled results.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{23}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{k}{def} \PY{n+nf}{plurality\PYZus{}comparison\PYZus{}table}\PY{p}{(}\PY{n}{results\PYZus{}df}\PY{p}{)}\PY{p}{:}
+    \PY{n}{key\PYZus{}cols} \PY{o}{=} \PY{p}{[}
+        \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{case\PYZus{}id}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+        \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{electorate}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+        \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{primary}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+        \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{turnout}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+        \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{strategy}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+        \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{ratio}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+        \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{candidate\PYZus{}slate}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{p}{]}
+    \PY{n}{plurality} \PY{o}{=} \PY{n}{results\PYZus{}df}\PY{p}{[}\PY{n}{results\PYZus{}df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{system}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{==} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Plurality}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{[}
+        \PY{n}{key\PYZus{}cols} \PY{o}{+} \PY{p}{[}
+            \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{distance\PYZus{}to\PYZus{}median}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+            \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{aggregate\PYZus{}welfare}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+            \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{minority\PYZus{}group\PYZus{}welfare}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+        \PY{p}{]}
+    \PY{p}{]}\PY{o}{.}\PY{n}{rename}\PY{p}{(}
+        \PY{n}{columns}\PY{o}{=}\PY{p}{\PYZob{}}
+            \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{distance\PYZus{}to\PYZus{}median}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{plurality\PYZus{}distance\PYZus{}to\PYZus{}median}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+            \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{aggregate\PYZus{}welfare}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{plurality\PYZus{}aggregate\PYZus{}welfare}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+            \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{minority\PYZus{}group\PYZus{}welfare}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{plurality\PYZus{}minority\PYZus{}group\PYZus{}welfare}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+        \PY{p}{\PYZcb{}}
+    \PY{p}{)}
+    \PY{n}{merged} \PY{o}{=} \PY{n}{results\PYZus{}df}\PY{o}{.}\PY{n}{merge}\PY{p}{(}\PY{n}{plurality}\PY{p}{,} \PY{n}{on}\PY{o}{=}\PY{n}{key\PYZus{}cols}\PY{p}{,} \PY{n}{how}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{left}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n}{merged}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{distance\PYZus{}gain\PYZus{}vs\PYZus{}plurality}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{p}{(}
+        \PY{n}{merged}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{plurality\PYZus{}distance\PYZus{}to\PYZus{}median}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{n}{merged}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{distance\PYZus{}to\PYZus{}median}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+    \PY{p}{)}
+    \PY{n}{merged}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{aggregate\PYZus{}gain\PYZus{}vs\PYZus{}plurality}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{p}{(}
+        \PY{n}{merged}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{aggregate\PYZus{}welfare}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{n}{merged}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{plurality\PYZus{}aggregate\PYZus{}welfare}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+    \PY{p}{)}
+    \PY{n}{merged}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{minority\PYZus{}gain\PYZus{}vs\PYZus{}plurality}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{p}{(}
+        \PY{n}{merged}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{minority\PYZus{}group\PYZus{}welfare}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{n}{merged}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{plurality\PYZus{}minority\PYZus{}group\PYZus{}welfare}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+    \PY{p}{)}
+    \PY{k}{return} \PY{n}{merged}
+
+
+\PY{k}{def} \PY{n+nf}{plot\PYZus{}sample\PYZus{}case\PYZus{}gallery}\PY{p}{(}\PY{n}{design\PYZus{}df}\PY{p}{,} \PY{n}{n\PYZus{}show}\PY{o}{=}\PY{l+m+mi}{6}\PY{p}{,} \PY{n}{base\PYZus{}seed}\PY{o}{=}\PY{n}{BASE\PYZus{}SEED}\PY{p}{)}\PY{p}{:}
+    \PY{n}{selected} \PY{o}{=} \PY{n}{design\PYZus{}df}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{n}{np}\PY{o}{.}\PY{n}{linspace}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{design\PYZus{}df}\PY{p}{)} \PY{o}{\PYZhy{}} \PY{l+m+mi}{1}\PY{p}{,} \PY{n}{num}\PY{o}{=}\PY{n+nb}{min}\PY{p}{(}\PY{n}{n\PYZus{}show}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{design\PYZus{}df}\PY{p}{)}\PY{p}{)}\PY{p}{,} \PY{n}{dtype}\PY{o}{=}\PY{n+nb}{int}\PY{p}{)}\PY{p}{]}
+    \PY{n}{n\PYZus{}cols} \PY{o}{=} \PY{l+m+mi}{3}
+    \PY{n}{n\PYZus{}rows} \PY{o}{=} \PY{n}{math}\PY{o}{.}\PY{n}{ceil}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{selected}\PY{p}{)} \PY{o}{/} \PY{n}{n\PYZus{}cols}\PY{p}{)}
+    \PY{n}{fig}\PY{p}{,} \PY{n}{axes} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{n}{n\PYZus{}rows}\PY{p}{,} \PY{n}{n\PYZus{}cols}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{15}\PY{p}{,} \PY{l+m+mf}{4.8} \PY{o}{*} \PY{n}{n\PYZus{}rows}\PY{p}{)}\PY{p}{,} \PY{n}{dpi}\PY{o}{=}\PY{l+m+mi}{150}\PY{p}{)}
+    \PY{n}{axes} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{atleast\PYZus{}1d}\PY{p}{(}\PY{n}{axes}\PY{p}{)}\PY{o}{.}\PY{n}{ravel}\PY{p}{(}\PY{p}{)}
+    \PY{n}{parties} \PY{o}{=} \PY{n}{build\PYZus{}party\PYZus{}positions}\PY{p}{(}\PY{p}{)}
+
+    \PY{k}{for} \PY{n}{ax}\PY{p}{,} \PY{p}{(}\PY{n}{\PYZus{}}\PY{p}{,} \PY{n}{row}\PY{p}{)} \PY{o+ow}{in} \PY{n+nb}{zip}\PY{p}{(}\PY{n}{axes}\PY{p}{,} \PY{n}{selected}\PY{o}{.}\PY{n}{iterrows}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+        \PY{n}{ratio\PYZus{}label} \PY{o}{=} \PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+si}{\PYZob{}}\PY{n+nb}{int}\PY{p}{(}\PY{n+nb}{round}\PY{p}{(}\PY{l+m+mi}{100}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{row}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{majority\PYZus{}share}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{:}\PY{l+s+si}{\PYZob{}}\PY{l+m+mi}{100}\PY{+w}{ }\PY{o}{\PYZhy{}}\PY{+w}{ }\PY{n+nb}{int}\PY{p}{(}\PY{n+nb}{round}\PY{p}{(}\PY{l+m+mi}{100}\PY{+w}{ }\PY{o}{*}\PY{+w}{ }\PY{n}{row}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{majority\PYZus{}share}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}
+        \PY{n}{electorate} \PY{o}{=} \PY{n}{build\PYZus{}grouped\PYZus{}electorate}\PY{p}{(}
+            \PY{n}{row}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{electorate}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,}
+            \PY{n}{ratio\PYZus{}label}\PY{p}{,}
+            \PY{n}{seed}\PY{o}{=}\PY{n}{base\PYZus{}seed} \PY{o}{+} \PY{n+nb}{int}\PY{p}{(}\PY{n}{row}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{case\PYZus{}id}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{)}\PY{p}{,}
+            \PY{n}{n\PYZus{}voters}\PY{o}{=}\PY{l+m+mi}{1200}\PY{p}{,}
+        \PY{p}{)}
+        \PY{n}{candidates} \PY{o}{=} \PY{n}{build\PYZus{}candidate\PYZus{}slate}\PY{p}{(}\PY{n}{row}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{candidate\PYZus{}slate}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{)}
+        \PY{n}{title} \PY{o}{=} \PY{p}{(}
+            \PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{case }\PY{l+s+si}{\PYZob{}}\PY{n+nb}{int}\PY{p}{(}\PY{n}{row}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{case\PYZus{}id}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{: }\PY{l+s+si}{\PYZob{}}\PY{n}{row}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{electorate}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{l+s+si}{\PYZcb{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+s2}{\PYZdq{}}
+            \PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+si}{\PYZob{}}\PY{n}{row}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{primary}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{, }\PY{l+s+si}{\PYZob{}}\PY{n}{row}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{turnout}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{, }\PY{l+s+si}{\PYZob{}}\PY{n}{row}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{strategy}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}
+        \PY{p}{)}
+        \PY{n}{plot\PYZus{}party\PYZus{}snapshot}\PY{p}{(}\PY{n}{electorate}\PY{p}{,} \PY{n}{candidates}\PY{p}{,} \PY{n}{parties}\PY{o}{=}\PY{n}{parties}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{ax}\PY{p}{,} \PY{n}{title}\PY{o}{=}\PY{n}{title}\PY{p}{,} \PY{n}{show\PYZus{}legend}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+
+    \PY{k}{for} \PY{n}{ax} \PY{o+ow}{in} \PY{n}{axes}\PY{p}{[}\PY{n+nb}{len}\PY{p}{(}\PY{n}{selected}\PY{p}{)}\PY{p}{:}\PY{p}{]}\PY{p}{:}
+        \PY{n}{ax}\PY{o}{.}\PY{n}{axis}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{off}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+    \PY{n}{fig}\PY{o}{.}\PY{n}{tight\PYZus{}layout}\PY{p}{(}\PY{p}{)}
+    \PY{k}{return} \PY{n}{fig}
+
+
+\PY{n}{REGRESSION\PYZus{}TERM\PYZus{}ORDER} \PY{o}{=} \PY{p}{[}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{electorate}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{primary}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{system}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{turnout profile}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{strategy profile}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{candidate slate}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{minority share}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{turnout intensity}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{strategy intensity}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{electorate × primary}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{electorate × system}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{primary × system}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{turnout profile × primary}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{turnout profile × system}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{strategy profile × system}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{minority share × primary}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{minority share × system}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{turnout intensity × turnout profile}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{strategy intensity × strategy profile}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+\PY{p}{]}
+
+
+\PY{k}{def} \PY{n+nf}{\PYZus{}zscore}\PY{p}{(}\PY{n}{series}\PY{p}{,} \PY{n}{name}\PY{p}{)}\PY{p}{:}
+    \PY{n}{values} \PY{o}{=} \PY{n}{series}\PY{o}{.}\PY{n}{astype}\PY{p}{(}\PY{n+nb}{float}\PY{p}{)}
+    \PY{n}{std} \PY{o}{=} \PY{n+nb}{float}\PY{p}{(}\PY{n}{values}\PY{o}{.}\PY{n}{std}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+    \PY{k}{if} \PY{n}{std} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{l+m+mf}{1e\PYZhy{}12}\PY{p}{:}
+        \PY{k}{return} \PY{n}{pd}\PY{o}{.}\PY{n}{Series}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{values}\PY{p}{)}\PY{p}{)}\PY{p}{,} \PY{n}{index}\PY{o}{=}\PY{n}{series}\PY{o}{.}\PY{n}{index}\PY{p}{,} \PY{n}{name}\PY{o}{=}\PY{n}{name}\PY{p}{)}
+    \PY{k}{return} \PY{p}{(}\PY{p}{(}\PY{n}{values} \PY{o}{\PYZhy{}} \PY{n+nb}{float}\PY{p}{(}\PY{n}{values}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{p}{)} \PY{o}{/} \PY{n}{std}\PY{p}{)}\PY{o}{.}\PY{n}{rename}\PY{p}{(}\PY{n}{name}\PY{p}{)}
+
+
+\PY{k}{def} \PY{n+nf}{\PYZus{}dummy\PYZus{}frame}\PY{p}{(}\PY{n}{series}\PY{p}{,} \PY{n}{prefix}\PY{p}{)}\PY{p}{:}
+    \PY{k}{return} \PY{n}{pd}\PY{o}{.}\PY{n}{get\PYZus{}dummies}\PY{p}{(}\PY{n}{series}\PY{p}{,} \PY{n}{prefix}\PY{o}{=}\PY{n}{prefix}\PY{p}{,} \PY{n}{drop\PYZus{}first}\PY{o}{=}\PY{k+kc}{False}\PY{p}{,} \PY{n}{dtype}\PY{o}{=}\PY{n+nb}{float}\PY{p}{)}
+
+
+\PY{k}{def} \PY{n+nf}{\PYZus{}interaction\PYZus{}frame}\PY{p}{(}\PY{n}{left}\PY{p}{,} \PY{n}{right}\PY{p}{,} \PY{n}{prefix}\PY{p}{)}\PY{p}{:}
+    \PY{n}{data} \PY{o}{=} \PY{p}{\PYZob{}}\PY{p}{\PYZcb{}}
+    \PY{k}{for} \PY{n}{left\PYZus{}col} \PY{o+ow}{in} \PY{n}{left}\PY{o}{.}\PY{n}{columns}\PY{p}{:}
+        \PY{k}{for} \PY{n}{right\PYZus{}col} \PY{o+ow}{in} \PY{n}{right}\PY{o}{.}\PY{n}{columns}\PY{p}{:}
+            \PY{n}{data}\PY{p}{[}\PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+si}{\PYZob{}}\PY{n}{prefix}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZus{}\PYZus{}}\PY{l+s+si}{\PYZob{}}\PY{n}{left\PYZus{}col}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZus{}\PYZus{}x\PYZus{}\PYZus{}}\PY{l+s+si}{\PYZob{}}\PY{n}{right\PYZus{}col}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{p}{(}
+                \PY{n}{left}\PY{p}{[}\PY{n}{left\PYZus{}col}\PY{p}{]}\PY{o}{.}\PY{n}{to\PYZus{}numpy}\PY{p}{(}\PY{n}{dtype}\PY{o}{=}\PY{n+nb}{float}\PY{p}{)} \PY{o}{*} \PY{n}{right}\PY{p}{[}\PY{n}{right\PYZus{}col}\PY{p}{]}\PY{o}{.}\PY{n}{to\PYZus{}numpy}\PY{p}{(}\PY{n}{dtype}\PY{o}{=}\PY{n+nb}{float}\PY{p}{)}
+            \PY{p}{)}
+    \PY{k}{return} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{data}\PY{p}{,} \PY{n}{index}\PY{o}{=}\PY{n}{left}\PY{o}{.}\PY{n}{index}\PY{p}{)}
+
+
+\PY{k}{def} \PY{n+nf}{\PYZus{}numeric\PYZus{}categorical\PYZus{}interaction}\PY{p}{(}\PY{n}{series}\PY{p}{,} \PY{n}{dummies}\PY{p}{,} \PY{n}{prefix}\PY{p}{)}\PY{p}{:}
+    \PY{n}{values} \PY{o}{=} \PY{n}{series}\PY{o}{.}\PY{n}{to\PYZus{}numpy}\PY{p}{(}\PY{n}{dtype}\PY{o}{=}\PY{n+nb}{float}\PY{p}{)}
+    \PY{n}{data} \PY{o}{=} \PY{p}{\PYZob{}}
+        \PY{l+s+sa}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+si}{\PYZob{}}\PY{n}{prefix}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZus{}\PYZus{}}\PY{l+s+si}{\PYZob{}}\PY{n}{column}\PY{l+s+si}{\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{values} \PY{o}{*} \PY{n}{dummies}\PY{p}{[}\PY{n}{column}\PY{p}{]}\PY{o}{.}\PY{n}{to\PYZus{}numpy}\PY{p}{(}\PY{n}{dtype}\PY{o}{=}\PY{n+nb}{float}\PY{p}{)}
+        \PY{k}{for} \PY{n}{column} \PY{o+ow}{in} \PY{n}{dummies}\PY{o}{.}\PY{n}{columns}
+    \PY{p}{\PYZcb{}}
+    \PY{k}{return} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{data}\PY{p}{,} \PY{n}{index}\PY{o}{=}\PY{n}{dummies}\PY{o}{.}\PY{n}{index}\PY{p}{)}
+
+
+\PY{k}{def} \PY{n+nf}{\PYZus{}prepare\PYZus{}regression\PYZus{}dataframe}\PY{p}{(}\PY{n}{results\PYZus{}df}\PY{p}{)}\PY{p}{:}
+    \PY{n}{modeling\PYZus{}df} \PY{o}{=} \PY{n}{results\PYZus{}df}\PY{o}{.}\PY{n}{copy}\PY{p}{(}\PY{p}{)}
+    \PY{n}{modeling\PYZus{}df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{minority\PYZus{}share\PYZus{}z}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{\PYZus{}zscore}\PY{p}{(}\PY{n}{modeling\PYZus{}df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{minority\PYZus{}share}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{minority\PYZus{}share\PYZus{}z}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n}{modeling\PYZus{}df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{minority\PYZus{}share\PYZus{}z\PYZus{}sq}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{p}{(}\PY{n}{modeling\PYZus{}df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{minority\PYZus{}share\PYZus{}z}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2}\PY{p}{)}\PY{o}{.}\PY{n}{rename}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{minority\PYZus{}share\PYZus{}z\PYZus{}sq}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n}{modeling\PYZus{}df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{turnout\PYZus{}strength\PYZus{}z}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{\PYZus{}zscore}\PY{p}{(}\PY{n}{modeling\PYZus{}df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{turnout\PYZus{}strength}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{turnout\PYZus{}strength\PYZus{}z}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n}{modeling\PYZus{}df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{turnout\PYZus{}strength\PYZus{}z\PYZus{}sq}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{p}{(}\PY{n}{modeling\PYZus{}df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{turnout\PYZus{}strength\PYZus{}z}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2}\PY{p}{)}\PY{o}{.}\PY{n}{rename}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{turnout\PYZus{}strength\PYZus{}z\PYZus{}sq}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n}{modeling\PYZus{}df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{strategy\PYZus{}strength\PYZus{}z}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{\PYZus{}zscore}\PY{p}{(}\PY{n}{modeling\PYZus{}df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{strategy\PYZus{}strength}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{strategy\PYZus{}strength\PYZus{}z}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{n}{modeling\PYZus{}df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{strategy\PYZus{}strength\PYZus{}z\PYZus{}sq}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{p}{(}\PY{n}{modeling\PYZus{}df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{strategy\PYZus{}strength\PYZus{}z}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2}\PY{p}{)}\PY{o}{.}\PY{n}{rename}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{strategy\PYZus{}strength\PYZus{}z\PYZus{}sq}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{k}{return} \PY{n}{modeling\PYZus{}df}
+
+
+\PY{k}{def} \PY{n+nf}{\PYZus{}build\PYZus{}richer\PYZus{}regression\PYZus{}matrix}\PY{p}{(}\PY{n}{modeling\PYZus{}df}\PY{p}{)}\PY{p}{:}
+    \PY{n}{categorical\PYZus{}blocks} \PY{o}{=} \PY{p}{\PYZob{}}
+        \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{electorate}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{\PYZus{}dummy\PYZus{}frame}\PY{p}{(}\PY{n}{modeling\PYZus{}df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{electorate}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{electorate}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{,}
+        \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{primary}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{\PYZus{}dummy\PYZus{}frame}\PY{p}{(}\PY{n}{modeling\PYZus{}df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{primary}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{primary}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{,}
+        \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{system}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{\PYZus{}dummy\PYZus{}frame}\PY{p}{(}\PY{n}{modeling\PYZus{}df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{system}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{system}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{,}
+        \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{turnout profile}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{\PYZus{}dummy\PYZus{}frame}\PY{p}{(}\PY{n}{modeling\PYZus{}df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{turnout}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{turnout}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{,}
+        \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{strategy profile}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{\PYZus{}dummy\PYZus{}frame}\PY{p}{(}\PY{n}{modeling\PYZus{}df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{strategy}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{strategy}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{,}
+        \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{candidate slate}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{\PYZus{}dummy\PYZus{}frame}\PY{p}{(}\PY{n}{modeling\PYZus{}df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{candidate\PYZus{}slate}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{candidate\PYZus{}slate}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{,}
+    \PY{p}{\PYZcb{}}
+    \PY{n}{numeric\PYZus{}blocks} \PY{o}{=} \PY{p}{\PYZob{}}
+        \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{minority share}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{modeling\PYZus{}df}\PY{p}{[}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{minority\PYZus{}share\PYZus{}z}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{minority\PYZus{}share\PYZus{}z\PYZus{}sq}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{copy}\PY{p}{(}\PY{p}{)}\PY{p}{,}
+        \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{turnout intensity}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{modeling\PYZus{}df}\PY{p}{[}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{turnout\PYZus{}strength\PYZus{}z}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{turnout\PYZus{}strength\PYZus{}z\PYZus{}sq}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{copy}\PY{p}{(}\PY{p}{)}\PY{p}{,}
+        \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{strategy intensity}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{modeling\PYZus{}df}\PY{p}{[}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{strategy\PYZus{}strength\PYZus{}z}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{strategy\PYZus{}strength\PYZus{}z\PYZus{}sq}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{]}\PY{o}{.}\PY{n}{copy}\PY{p}{(}\PY{p}{)}\PY{p}{,}
+    \PY{p}{\PYZcb{}}
+
+    \PY{n}{blocks} \PY{o}{=} \PY{p}{\PYZob{}}\PY{p}{\PYZcb{}}
+    \PY{n}{blocks}\PY{o}{.}\PY{n}{update}\PY{p}{(}\PY{n}{categorical\PYZus{}blocks}\PY{p}{)}
+    \PY{n}{blocks}\PY{o}{.}\PY{n}{update}\PY{p}{(}\PY{n}{numeric\PYZus{}blocks}\PY{p}{)}
+    \PY{n}{blocks}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{electorate × primary}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{\PYZus{}interaction\PYZus{}frame}\PY{p}{(}
+        \PY{n}{categorical\PYZus{}blocks}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{electorate}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{n}{categorical\PYZus{}blocks}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{primary}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{electorate\PYZus{}primary}\PY{l+s+s2}{\PYZdq{}}
+    \PY{p}{)}
+    \PY{n}{blocks}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{electorate × system}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{\PYZus{}interaction\PYZus{}frame}\PY{p}{(}
+        \PY{n}{categorical\PYZus{}blocks}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{electorate}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{n}{categorical\PYZus{}blocks}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{system}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{electorate\PYZus{}system}\PY{l+s+s2}{\PYZdq{}}
+    \PY{p}{)}
+    \PY{n}{blocks}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{primary × system}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{\PYZus{}interaction\PYZus{}frame}\PY{p}{(}
+        \PY{n}{categorical\PYZus{}blocks}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{primary}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{n}{categorical\PYZus{}blocks}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{system}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{primary\PYZus{}system}\PY{l+s+s2}{\PYZdq{}}
+    \PY{p}{)}
+    \PY{n}{blocks}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{turnout profile × primary}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{\PYZus{}interaction\PYZus{}frame}\PY{p}{(}
+        \PY{n}{categorical\PYZus{}blocks}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{turnout profile}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{n}{categorical\PYZus{}blocks}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{primary}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{turnout\PYZus{}primary}\PY{l+s+s2}{\PYZdq{}}
+    \PY{p}{)}
+    \PY{n}{blocks}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{turnout profile × system}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{\PYZus{}interaction\PYZus{}frame}\PY{p}{(}
+        \PY{n}{categorical\PYZus{}blocks}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{turnout profile}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{n}{categorical\PYZus{}blocks}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{system}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{turnout\PYZus{}system}\PY{l+s+s2}{\PYZdq{}}
+    \PY{p}{)}
+    \PY{n}{blocks}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{strategy profile × system}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{\PYZus{}interaction\PYZus{}frame}\PY{p}{(}
+        \PY{n}{categorical\PYZus{}blocks}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{strategy profile}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{n}{categorical\PYZus{}blocks}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{system}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{strategy\PYZus{}system}\PY{l+s+s2}{\PYZdq{}}
+    \PY{p}{)}
+    \PY{n}{blocks}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{minority share × primary}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{\PYZus{}numeric\PYZus{}categorical\PYZus{}interaction}\PY{p}{(}
+        \PY{n}{modeling\PYZus{}df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{minority\PYZus{}share\PYZus{}z}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{n}{categorical\PYZus{}blocks}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{primary}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{minority\PYZus{}share\PYZus{}primary}\PY{l+s+s2}{\PYZdq{}}
+    \PY{p}{)}
+    \PY{n}{blocks}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{minority share × system}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{\PYZus{}numeric\PYZus{}categorical\PYZus{}interaction}\PY{p}{(}
+        \PY{n}{modeling\PYZus{}df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{minority\PYZus{}share\PYZus{}z}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{n}{categorical\PYZus{}blocks}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{system}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{minority\PYZus{}share\PYZus{}system}\PY{l+s+s2}{\PYZdq{}}
+    \PY{p}{)}
+    \PY{n}{blocks}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{turnout intensity × turnout profile}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{\PYZus{}numeric\PYZus{}categorical\PYZus{}interaction}\PY{p}{(}
+        \PY{n}{modeling\PYZus{}df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{turnout\PYZus{}strength\PYZus{}z}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{n}{categorical\PYZus{}blocks}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{turnout profile}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{turnout\PYZus{}strength\PYZus{}turnout}\PY{l+s+s2}{\PYZdq{}}
+    \PY{p}{)}
+    \PY{n}{blocks}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{strategy intensity × strategy profile}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{\PYZus{}numeric\PYZus{}categorical\PYZus{}interaction}\PY{p}{(}
+        \PY{n}{modeling\PYZus{}df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{strategy\PYZus{}strength\PYZus{}z}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{n}{categorical\PYZus{}blocks}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{strategy profile}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{strategy\PYZus{}strength\PYZus{}strategy}\PY{l+s+s2}{\PYZdq{}}
+    \PY{p}{)}
+
+    \PY{n}{design\PYZus{}matrix} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{concat}\PY{p}{(}\PY{p}{[}\PY{n}{blocks}\PY{p}{[}\PY{n}{name}\PY{p}{]} \PY{k}{for} \PY{n}{name} \PY{o+ow}{in} \PY{n}{REGRESSION\PYZus{}TERM\PYZus{}ORDER}\PY{p}{]}\PY{p}{,} \PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+    \PY{n}{term\PYZus{}columns} \PY{o}{=} \PY{p}{\PYZob{}}\PY{n}{name}\PY{p}{:} \PY{n}{blocks}\PY{p}{[}\PY{n}{name}\PY{p}{]}\PY{o}{.}\PY{n}{columns}\PY{o}{.}\PY{n}{tolist}\PY{p}{(}\PY{p}{)} \PY{k}{for} \PY{n}{name} \PY{o+ow}{in} \PY{n}{REGRESSION\PYZus{}TERM\PYZus{}ORDER}\PY{p}{\PYZcb{}}
+    \PY{k}{return} \PY{n}{design\PYZus{}matrix}\PY{o}{.}\PY{n}{astype}\PY{p}{(}\PY{n+nb}{float}\PY{p}{)}\PY{p}{,} \PY{n}{term\PYZus{}columns}
+
+
+\PY{k}{def} \PY{n+nf}{\PYZus{}fit\PYZus{}linear\PYZus{}regression}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{ridge}\PY{o}{=}\PY{l+m+mf}{1e\PYZhy{}6}\PY{p}{)}\PY{p}{:}
+    \PY{n}{X\PYZus{}mat} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{asarray}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{dtype}\PY{o}{=}\PY{n+nb}{float}\PY{p}{)}
+    \PY{n}{y\PYZus{}vec} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{asarray}\PY{p}{(}\PY{n}{y}\PY{p}{,} \PY{n}{dtype}\PY{o}{=}\PY{n+nb}{float}\PY{p}{)}
+    \PY{n}{intercept} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{ones}\PY{p}{(}\PY{p}{(}\PY{n}{X\PYZus{}mat}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,} \PY{n}{dtype}\PY{o}{=}\PY{n+nb}{float}\PY{p}{)}
+    \PY{n}{X\PYZus{}aug} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{hstack}\PY{p}{(}\PY{p}{[}\PY{n}{intercept}\PY{p}{,} \PY{n}{X\PYZus{}mat}\PY{p}{]}\PY{p}{)}
+    \PY{n}{penalty} \PY{o}{=} \PY{n}{ridge} \PY{o}{*} \PY{n}{np}\PY{o}{.}\PY{n}{eye}\PY{p}{(}\PY{n}{X\PYZus{}aug}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,} \PY{n}{dtype}\PY{o}{=}\PY{n+nb}{float}\PY{p}{)}
+    \PY{n}{penalty}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{]} \PY{o}{=} \PY{l+m+mf}{0.0}
+    \PY{n}{beta} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{linalg}\PY{o}{.}\PY{n}{solve}\PY{p}{(}\PY{n}{X\PYZus{}aug}\PY{o}{.}\PY{n}{T} \PY{o}{@} \PY{n}{X\PYZus{}aug} \PY{o}{+} \PY{n}{penalty}\PY{p}{,} \PY{n}{X\PYZus{}aug}\PY{o}{.}\PY{n}{T} \PY{o}{@} \PY{n}{y\PYZus{}vec}\PY{p}{)}
+    \PY{k}{return} \PY{n}{beta}
+
+
+\PY{k}{def} \PY{n+nf}{\PYZus{}predict\PYZus{}linear\PYZus{}regression}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{beta}\PY{p}{)}\PY{p}{:}
+    \PY{n}{X\PYZus{}mat} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{asarray}\PY{p}{(}\PY{n}{X}\PY{p}{,} \PY{n}{dtype}\PY{o}{=}\PY{n+nb}{float}\PY{p}{)}
+    \PY{n}{intercept} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{ones}\PY{p}{(}\PY{p}{(}\PY{n}{X\PYZus{}mat}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,} \PY{n}{dtype}\PY{o}{=}\PY{n+nb}{float}\PY{p}{)}
+    \PY{n}{X\PYZus{}aug} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{hstack}\PY{p}{(}\PY{p}{[}\PY{n}{intercept}\PY{p}{,} \PY{n}{X\PYZus{}mat}\PY{p}{]}\PY{p}{)}
+    \PY{k}{return} \PY{n}{X\PYZus{}aug} \PY{o}{@} \PY{n}{beta}
+
+
+\PY{k}{def} \PY{n+nf}{\PYZus{}r2\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}true}\PY{p}{,} \PY{n}{y\PYZus{}pred}\PY{p}{)}\PY{p}{:}
+    \PY{n}{y\PYZus{}true} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{asarray}\PY{p}{(}\PY{n}{y\PYZus{}true}\PY{p}{,} \PY{n}{dtype}\PY{o}{=}\PY{n+nb}{float}\PY{p}{)}
+    \PY{n}{y\PYZus{}pred} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{asarray}\PY{p}{(}\PY{n}{y\PYZus{}pred}\PY{p}{,} \PY{n}{dtype}\PY{o}{=}\PY{n+nb}{float}\PY{p}{)}
+    \PY{n}{denom} \PY{o}{=} \PY{p}{(}\PY{p}{(}\PY{n}{y\PYZus{}true} \PY{o}{\PYZhy{}} \PY{n}{y\PYZus{}true}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{p}{)}\PY{p}{)} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}
+    \PY{k}{if} \PY{n}{denom} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{l+m+mf}{1e\PYZhy{}12}\PY{p}{:}
+        \PY{k}{return} \PY{l+m+mf}{0.0}
+    \PY{k}{return} \PY{n+nb}{float}\PY{p}{(}\PY{l+m+mf}{1.0} \PY{o}{\PYZhy{}} \PY{p}{(}\PY{p}{(}\PY{n}{y\PYZus{}true} \PY{o}{\PYZhy{}} \PY{n}{y\PYZus{}pred}\PY{p}{)} \PY{o}{*}\PY{o}{*} \PY{l+m+mi}{2}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)} \PY{o}{/} \PY{n}{denom}\PY{p}{)}
+
+
+\PY{k}{def} \PY{n+nf}{grouped\PYZus{}regression\PYZus{}importance}\PY{p}{(}\PY{n}{results\PYZus{}df}\PY{p}{,} \PY{n}{target\PYZus{}col}\PY{p}{)}\PY{p}{:}
+    \PY{n}{modeling\PYZus{}df} \PY{o}{=} \PY{n}{\PYZus{}prepare\PYZus{}regression\PYZus{}dataframe}\PY{p}{(}\PY{n}{results\PYZus{}df}\PY{p}{)}
+    \PY{n}{X\PYZus{}all}\PY{p}{,} \PY{n}{term\PYZus{}columns} \PY{o}{=} \PY{n}{\PYZus{}build\PYZus{}richer\PYZus{}regression\PYZus{}matrix}\PY{p}{(}\PY{n}{modeling\PYZus{}df}\PY{p}{)}
+    \PY{n}{y\PYZus{}all} \PY{o}{=} \PY{n}{modeling\PYZus{}df}\PY{p}{[}\PY{n}{target\PYZus{}col}\PY{p}{]}\PY{o}{.}\PY{n}{astype}\PY{p}{(}\PY{n+nb}{float}\PY{p}{)}
+
+    \PY{n}{beta\PYZus{}full} \PY{o}{=} \PY{n}{\PYZus{}fit\PYZus{}linear\PYZus{}regression}\PY{p}{(}\PY{n}{X\PYZus{}all}\PY{p}{,} \PY{n}{y\PYZus{}all}\PY{p}{)}
+    \PY{n}{full\PYZus{}r2} \PY{o}{=} \PY{n}{\PYZus{}r2\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}all}\PY{p}{,} \PY{n}{\PYZus{}predict\PYZus{}linear\PYZus{}regression}\PY{p}{(}\PY{n}{X\PYZus{}all}\PY{p}{,} \PY{n}{beta\PYZus{}full}\PY{p}{)}\PY{p}{)}
+
+    \PY{n}{rows} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+    \PY{k}{for} \PY{n}{term\PYZus{}family} \PY{o+ow}{in} \PY{n}{REGRESSION\PYZus{}TERM\PYZus{}ORDER}\PY{p}{:}
+        \PY{n}{columns} \PY{o}{=} \PY{n}{term\PYZus{}columns}\PY{p}{[}\PY{n}{term\PYZus{}family}\PY{p}{]}
+        \PY{n}{reduced\PYZus{}columns} \PY{o}{=} \PY{p}{[}\PY{n}{column} \PY{k}{for} \PY{n}{column} \PY{o+ow}{in} \PY{n}{X\PYZus{}all}\PY{o}{.}\PY{n}{columns} \PY{k}{if} \PY{n}{column} \PY{o+ow}{not} \PY{o+ow}{in} \PY{n}{columns}\PY{p}{]}
+        \PY{n}{beta\PYZus{}reduced} \PY{o}{=} \PY{n}{\PYZus{}fit\PYZus{}linear\PYZus{}regression}\PY{p}{(}\PY{n}{X\PYZus{}all}\PY{p}{[}\PY{n}{reduced\PYZus{}columns}\PY{p}{]}\PY{p}{,} \PY{n}{y\PYZus{}all}\PY{p}{)}
+        \PY{n}{reduced\PYZus{}r2} \PY{o}{=} \PY{n}{\PYZus{}r2\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}all}\PY{p}{,} \PY{n}{\PYZus{}predict\PYZus{}linear\PYZus{}regression}\PY{p}{(}\PY{n}{X\PYZus{}all}\PY{p}{[}\PY{n}{reduced\PYZus{}columns}\PY{p}{]}\PY{p}{,} \PY{n}{beta\PYZus{}reduced}\PY{p}{)}\PY{p}{)}
+        \PY{n}{rows}\PY{o}{.}\PY{n}{append}\PY{p}{(}
+            \PY{p}{\PYZob{}}
+                \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{term\PYZus{}family}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{term\PYZus{}family}\PY{p}{,}
+                \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{r2\PYZus{}drop}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n+nb}{max}\PY{p}{(}\PY{l+m+mf}{0.0}\PY{p}{,} \PY{n}{full\PYZus{}r2} \PY{o}{\PYZhy{}} \PY{n}{reduced\PYZus{}r2}\PY{p}{)}\PY{p}{,}
+                \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{full\PYZus{}r2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{full\PYZus{}r2}\PY{p}{,}
+            \PY{p}{\PYZcb{}}
+        \PY{p}{)}
+
+    \PY{n}{importance\PYZus{}df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{rows}\PY{p}{)}
+    \PY{n}{total\PYZus{}drop} \PY{o}{=} \PY{n+nb}{float}\PY{p}{(}\PY{n}{importance\PYZus{}df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{r2\PYZus{}drop}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+    \PY{k}{if} \PY{n}{total\PYZus{}drop} \PY{o}{\PYZlt{}}\PY{o}{=} \PY{l+m+mf}{1e\PYZhy{}12}\PY{p}{:}
+        \PY{n}{importance\PYZus{}df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{importance\PYZus{}share}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{l+m+mf}{0.0}
+    \PY{k}{else}\PY{p}{:}
+        \PY{n}{importance\PYZus{}df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{importance\PYZus{}share}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{n}{importance\PYZus{}df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{r2\PYZus{}drop}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{/} \PY{n}{total\PYZus{}drop}
+    \PY{k}{return} \PY{n}{importance\PYZus{}df}\PY{o}{.}\PY{n}{sort\PYZus{}values}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{r2\PYZus{}drop}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{ascending}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}\PY{o}{.}\PY{n}{reset\PYZus{}index}\PY{p}{(}\PY{n}{drop}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{The mixed-LHS overview
+table}\label{the-mixed-lhs-overview-table}
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{24}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{mixed\PYZus{}lhs\PYZus{}helper\PYZus{}overview}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{24}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+                  dimension                                             values
+0            Majority share                                       [0.60, 0.99]
+1         Electorate family  Aligned polarization, Shared center, Cross-pre{\ldots}
+2          Primary pipeline  No primary, Closed plurality, Closed IRV, Semi{\ldots}
+3           Turnout profile  Even turnout, Activist primary, Moderate prima{\ldots}
+4         Turnout intensity  0 = mild turnout distortion, 1 = strong turnou{\ldots}
+5          Strategy profile  Sincere, Defensive compromise, Aggressive comp{\ldots}
+6        Strategy intensity  0 = mild strategic pressure, 1 = strong strate{\ldots}
+7           Candidate slate  Balanced ladder, Bridge-heavy, Majority-heavy,{\ldots}
+8  General-election systems         Plurality, IRV, Approval, Score, Condorcet
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Drawing the sampled
+design}\label{drawing-the-sampled-design}
+
+The next cell creates the sampled design used by the notebook. The
+dataframe shows one row per sampled political setting before systems are
+expanded.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{25}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{design\PYZus{}df} \PY{o}{=} \PY{n}{sample\PYZus{}mixed\PYZus{}latin\PYZus{}hypercube\PYZus{}design}\PY{p}{(}\PY{n}{n\PYZus{}cases}\PY{o}{=}\PY{n}{N\PYZus{}CASES}\PY{p}{,} \PY{n}{seed}\PY{o}{=}\PY{n}{BASE\PYZus{}SEED}\PY{p}{)}
+\PY{n}{design\PYZus{}df}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{l+m+mi}{12}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{25}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+    case\_id  majority\_share  minority\_share                electorate  \textbackslash{}
+0       747        0.600095        0.399905      Aligned polarization
+1       486        0.600418        0.399582             Shared center
+2       387        0.601137        0.398863             Shared center
+3       496        0.601391        0.398609        Asymmetric sorting
+4       602        0.601858        0.398142      Aligned polarization
+5       392        0.602011        0.397989      Aligned polarization
+6       443        0.602601        0.397399        Asymmetric sorting
+7       357        0.602862        0.397138        Asymmetric sorting
+8       852        0.603263        0.396737             Shared center
+9       996        0.603866        0.396134  Cross-pressured minority
+10      583        0.604064        0.395936      Aligned polarization
+11      940        0.604657        0.395343      Aligned polarization
+
+             primary           turnout  turnout\_strength  \textbackslash{}
+0         No primary  Activist primary          0.822499
+1         Closed IRV  Moderate primary          0.298484
+2         No primary      Even turnout          0.233047
+3         Top-4 open  Activist primary          0.358478
+4     Semi plurality  Moderate primary          0.729285
+5         No primary    Minority surge          0.877697
+6         Closed IRV  Moderate primary          0.097886
+7   Closed plurality  Moderate primary          0.848586
+8         Closed IRV    Minority surge          0.534342
+9   Closed plurality    Minority surge          0.625475
+10    Semi plurality      Even turnout          0.806125
+11  Closed plurality  Activist primary          0.381811
+
+                 strategy  strategy\_strength  candidate\_slate  ratio
+0    Defensive compromise           0.610173  Insurgent right  60:40
+1                 Sincere           0.390075     Bridge-heavy  60:40
+2                 Sincere           0.137041     Bridge-heavy  60:40
+3   Aggressive compromise           0.845924  Balanced ladder  60:40
+4   Aggressive compromise           0.270335  Insurgent right  60:40
+5     Adversarial ranking           0.584004     Bridge-heavy  60:40
+6                 Sincere           0.882136     Bridge-heavy  60:40
+7     Adversarial ranking           0.108682  Balanced ladder  60:40
+8                 Sincere           0.773510     Bridge-heavy  60:40
+9                 Sincere           0.308220  Balanced ladder  60:40
+10    Adversarial ranking           0.466842   Majority-heavy  60:40
+11   Defensive compromise           0.656219   Majority-heavy  60:40
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Coverage of the sampled
+space}\label{coverage-of-the-sampled-space}
+
+The point of the Latin hypercube to keep the continuous parameters from
+bunching up in just one corner of the design as seen in the illustration
+below.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{26}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{plot\PYZus{}mixed\PYZus{}lhs\PYZus{}parameter\PYZus{}coverage}\PY{p}{(}\PY{n}{design\PYZus{}df}\PY{p}{)}\PY{p}{;}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{party_primaries_turnout_strategy_space_files/party_primaries_turnout_strategy_space_15_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{A few representative sampled
+cases}\label{a-few-representative-sampled-cases}
+
+This section shows a small subset of the sampled cases to make the
+design intuitive to readers.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{27}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{plot\PYZus{}sample\PYZus{}case\PYZus{}gallery}\PY{p}{(}\PY{n}{design\PYZus{}df}\PY{p}{,} \PY{n}{n\PYZus{}show}\PY{o}{=}\PY{l+m+mi}{6}\PY{p}{)}\PY{p}{;}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{party_primaries_turnout_strategy_space_files/party_primaries_turnout_strategy_space_17_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Running the sampled
+design}\label{running-the-sampled-design}
+
+Each sampled case is evaluated under all five compatible electoral
+systems. That expansion keeps plurality available as a within-case
+baseline instead of turning it into a separate experiment.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{28}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{results\PYZus{}df} \PY{o}{=} \PY{n}{run\PYZus{}mixed\PYZus{}lhs\PYZus{}grid}\PY{p}{(}\PY{n}{design\PYZus{}df}\PY{p}{,} \PY{n}{seed}\PY{o}{=}\PY{n}{BASE\PYZus{}SEED}\PY{p}{,} \PY{n}{n\PYZus{}voters}\PY{o}{=}\PY{n}{N\PYZus{}VOTERS}\PY{p}{)}
+\PY{n}{results\PYZus{}df}\PY{o}{.}\PY{n}{shape}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{28}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+(5000, 40)
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{System-level summary}\label{system-level-summary}
+
+This first summary averages across the sampled design. It should not be
+read as a universal ranking. It is just a compact way to see which
+systems tend to move outcomes toward the electorate center, and which
+ones tend to help or hurt welfare relative to their own matched
+no-primary baselines.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{29}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{system\PYZus{}summary} \PY{o}{=} \PY{p}{(}
+    \PY{n}{results\PYZus{}df}\PY{o}{.}\PY{n}{groupby}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{system}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{as\PYZus{}index}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+    \PY{o}{.}\PY{n}{agg}\PY{p}{(}
+        \PY{n}{mean\PYZus{}distance\PYZus{}to\PYZus{}median}\PY{o}{=}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{distance\PYZus{}to\PYZus{}median}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{,}
+        \PY{n}{mean\PYZus{}aggregate\PYZus{}delta}\PY{o}{=}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{aggregate\PYZus{}welfare\PYZus{}delta\PYZus{}vs\PYZus{}no\PYZus{}primary}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{,}
+        \PY{n}{mean\PYZus{}minority\PYZus{}delta}\PY{o}{=}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{minority\PYZus{}group\PYZus{}welfare\PYZus{}delta\PYZus{}vs\PYZus{}no\PYZus{}primary}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{,}
+    \PY{p}{)}
+    \PY{o}{.}\PY{n}{sort\PYZus{}values}\PY{p}{(}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean\PYZus{}distance\PYZus{}to\PYZus{}median}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean\PYZus{}minority\PYZus{}delta}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{n}{ascending}\PY{o}{=}\PY{p}{[}\PY{k+kc}{True}\PY{p}{,} \PY{k+kc}{False}\PY{p}{]}\PY{p}{)}
+    \PY{o}{.}\PY{n}{reset\PYZus{}index}\PY{p}{(}\PY{n}{drop}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{p}{)}
+\PY{n}{system\PYZus{}summary}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{29}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+      system  mean\_distance\_to\_median  mean\_aggregate\_delta  \textbackslash{}
+0      Score                 0.108495             -0.015592
+1  Condorcet                 0.113214             -0.010423
+2   Approval                 0.113399             -0.014789
+3  Plurality                 0.114608             -0.012493
+4        IRV                 0.122844             -0.005199
+
+   mean\_minority\_delta
+0            -0.039858
+1            -0.027980
+2            -0.032945
+3            -0.025816
+4            -0.027736
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{30}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{fig}\PY{p}{,} \PY{n}{axes} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{15}\PY{p}{,} \PY{l+m+mi}{4}\PY{p}{)}\PY{p}{,} \PY{n}{dpi}\PY{o}{=}\PY{l+m+mi}{150}\PY{p}{)}
+
+\PY{n}{sns}\PY{o}{.}\PY{n}{barplot}\PY{p}{(}\PY{n}{data}\PY{o}{=}\PY{n}{system\PYZus{}summary}\PY{p}{,} \PY{n}{x}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{system}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{y}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean\PYZus{}distance\PYZus{}to\PYZus{}median}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZsh{}457b9d}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Mean distance to median}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{tick\PYZus{}params}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{x}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{rotation}\PY{o}{=}\PY{l+m+mi}{35}\PY{p}{)}
+
+\PY{n}{sns}\PY{o}{.}\PY{n}{barplot}\PY{p}{(}\PY{n}{data}\PY{o}{=}\PY{n}{system\PYZus{}summary}\PY{p}{,} \PY{n}{x}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{system}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{y}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean\PYZus{}aggregate\PYZus{}delta}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZsh{}2a9d8f}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{axhline}\PY{p}{(}\PY{l+m+mf}{0.0}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{black}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{linewidth}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Mean aggregate\PYZhy{}welfare delta}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{tick\PYZus{}params}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{x}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{rotation}\PY{o}{=}\PY{l+m+mi}{35}\PY{p}{)}
+
+\PY{n}{sns}\PY{o}{.}\PY{n}{barplot}\PY{p}{(}\PY{n}{data}\PY{o}{=}\PY{n}{system\PYZus{}summary}\PY{p}{,} \PY{n}{x}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{system}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{y}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean\PYZus{}minority\PYZus{}delta}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZsh{}e76f51}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]}\PY{o}{.}\PY{n}{axhline}\PY{p}{(}\PY{l+m+mf}{0.0}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{black}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{linewidth}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Mean minority\PYZhy{}welfare delta}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]}\PY{o}{.}\PY{n}{tick\PYZus{}params}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{x}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{rotation}\PY{o}{=}\PY{l+m+mi}{35}\PY{p}{)}
+
+\PY{n}{fig}\PY{o}{.}\PY{n}{tight\PYZus{}layout}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{party_primaries_turnout_strategy_space_files/party_primaries_turnout_strategy_space_22_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{What changes once primaries are
+introduced}\label{what-changes-once-primaries-are-introduced}
+
+The next table averages by \texttt{primary\ ×\ system}. Formally, it is
+summarizing estimates of the matched-baseline quantity
+
+\[
+\Delta_M(s, p) = \mathbb{E}_{Z}\left[M(s, p, Z) - M(s, \text{No primary}, Z)\right],
+\]
+
+for different choices of metric \(M\). So each cell is answering a
+question like: after averaging over the rest of the sampled political
+environment, what happens when this primary pipeline is added in front
+of this final electoral system?
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{31}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{primary\PYZus{}summary} \PY{o}{=} \PY{p}{(}
+    \PY{n}{results\PYZus{}df}\PY{o}{.}\PY{n}{groupby}\PY{p}{(}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{primary}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{system}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{n}{as\PYZus{}index}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+    \PY{o}{.}\PY{n}{agg}\PY{p}{(}
+        \PY{n}{mean\PYZus{}distance\PYZus{}to\PYZus{}median}\PY{o}{=}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{distance\PYZus{}to\PYZus{}median}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{,}
+        \PY{n}{mean\PYZus{}aggregate\PYZus{}delta}\PY{o}{=}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{aggregate\PYZus{}welfare\PYZus{}delta\PYZus{}vs\PYZus{}no\PYZus{}primary}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{,}
+        \PY{n}{mean\PYZus{}minority\PYZus{}delta}\PY{o}{=}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{minority\PYZus{}group\PYZus{}welfare\PYZus{}delta\PYZus{}vs\PYZus{}no\PYZus{}primary}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{,}
+    \PY{p}{)}
+\PY{p}{)}
+\PY{n}{primary\PYZus{}summary}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{31}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+             primary     system  mean\_distance\_to\_median  \textbackslash{}
+0         Closed IRV   Approval                 0.137962
+1         Closed IRV  Condorcet                 0.126864
+2         Closed IRV        IRV                 0.124394
+3         Closed IRV  Plurality                 0.126195
+4         Closed IRV      Score                 0.132716
+5   Closed plurality   Approval                 0.141626
+6   Closed plurality  Condorcet                 0.137323
+7   Closed plurality        IRV                 0.143271
+8   Closed plurality  Plurality                 0.137996
+9   Closed plurality      Score                 0.139918
+10        No primary   Approval                 0.070162
+11        No primary  Condorcet                 0.083442
+12        No primary        IRV                 0.106769
+13        No primary  Plurality                 0.076309
+14        No primary      Score                 0.057974
+15    Semi plurality   Approval                 0.137769
+16    Semi plurality  Condorcet                 0.128648
+17    Semi plurality        IRV                 0.131452
+18    Semi plurality  Plurality                 0.128937
+19    Semi plurality      Score                 0.139479
+20        Top-4 open   Approval                 0.079476
+21        Top-4 open  Condorcet                 0.089794
+22        Top-4 open        IRV                 0.108334
+23        Top-4 open  Plurality                 0.103601
+24        Top-4 open      Score                 0.072389
+
+    mean\_aggregate\_delta  mean\_minority\_delta
+0              -0.025714            -0.052621
+1              -0.015929            -0.046287
+2              -0.003690            -0.042738
+3              -0.019280            -0.036006
+4              -0.023760            -0.059740
+5              -0.026113            -0.062050
+6              -0.021508            -0.056055
+7              -0.018780            -0.063452
+8              -0.018086            -0.046137
+9              -0.027133            -0.077582
+10              0.000000             0.000000
+11              0.000000             0.000000
+12              0.000000             0.000000
+13              0.000000             0.000000
+14              0.000000             0.000000
+15             -0.021841            -0.043351
+16             -0.013875            -0.045494
+17             -0.002195            -0.036596
+18             -0.015320            -0.033949
+19             -0.026145            -0.057042
+20             -0.000276            -0.006702
+21             -0.000802             0.007936
+22             -0.001327             0.004105
+23             -0.009780            -0.012986
+24             -0.000923            -0.004928
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{32}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{fig}\PY{p}{,} \PY{n}{axes} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{14}\PY{p}{,} \PY{l+m+mi}{5}\PY{p}{)}\PY{p}{,} \PY{n}{dpi}\PY{o}{=}\PY{l+m+mi}{150}\PY{p}{)}
+\PY{n}{agg\PYZus{}pivot} \PY{o}{=} \PY{n}{primary\PYZus{}summary}\PY{o}{.}\PY{n}{pivot}\PY{p}{(}\PY{n}{index}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{primary}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{columns}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{system}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{values}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean\PYZus{}aggregate\PYZus{}delta}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{PRIMARY\PYZus{}ORDER}\PY{p}{,} \PY{n}{SYSTEM\PYZus{}ORDER}\PY{p}{]}
+\PY{n}{min\PYZus{}pivot} \PY{o}{=} \PY{n}{primary\PYZus{}summary}\PY{o}{.}\PY{n}{pivot}\PY{p}{(}\PY{n}{index}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{primary}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{columns}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{system}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{values}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean\PYZus{}minority\PYZus{}delta}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{PRIMARY\PYZus{}ORDER}\PY{p}{,} \PY{n}{SYSTEM\PYZus{}ORDER}\PY{p}{]}
+
+\PY{n}{sns}\PY{o}{.}\PY{n}{heatmap}\PY{p}{(}\PY{n}{agg\PYZus{}pivot}\PY{p}{,} \PY{n}{annot}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{fmt}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{.3f}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{cmap}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{RdBu\PYZus{}r}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{center}\PY{o}{=}\PY{l+m+mf}{0.0}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}
+\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Aggregate\PYZhy{}welfare delta vs no primary}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{System}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Primary}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{n}{sns}\PY{o}{.}\PY{n}{heatmap}\PY{p}{(}\PY{n}{min\PYZus{}pivot}\PY{p}{,} \PY{n}{annot}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{fmt}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{.3f}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{cmap}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{RdBu\PYZus{}r}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{center}\PY{o}{=}\PY{l+m+mf}{0.0}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
+\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Minority\PYZhy{}welfare delta vs no primary}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{System}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Primary}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{n}{fig}\PY{o}{.}\PY{n}{tight\PYZus{}layout}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{party_primaries_turnout_strategy_space_files/party_primaries_turnout_strategy_space_25_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Strategy sensitivity}\label{strategy-sensitivity}
+
+The strategy profiles are still family-matched rather than literally
+identical across all systems. What changes here is that each sampled
+case also carries a strategy-intensity parameter, so the notebook is not
+just asking whether strategic pressure exists, but also how strongly it
+is present.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{33}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{strategy\PYZus{}summary} \PY{o}{=} \PY{p}{(}
+    \PY{n}{results\PYZus{}df}\PY{o}{.}\PY{n}{groupby}\PY{p}{(}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{strategy}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{system}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{n}{as\PYZus{}index}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+    \PY{o}{.}\PY{n}{agg}\PY{p}{(}
+        \PY{n}{mean\PYZus{}distance\PYZus{}to\PYZus{}median}\PY{o}{=}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{distance\PYZus{}to\PYZus{}median}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{,}
+        \PY{n}{mean\PYZus{}aggregate\PYZus{}delta}\PY{o}{=}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{aggregate\PYZus{}welfare\PYZus{}delta\PYZus{}vs\PYZus{}no\PYZus{}primary}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{,}
+        \PY{n}{mean\PYZus{}minority\PYZus{}delta}\PY{o}{=}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{minority\PYZus{}group\PYZus{}welfare\PYZus{}delta\PYZus{}vs\PYZus{}no\PYZus{}primary}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{,}
+    \PY{p}{)}
+\PY{p}{)}
+\PY{n}{strategy\PYZus{}summary}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{33}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+                 strategy     system  mean\_distance\_to\_median  \textbackslash{}
+0     Adversarial ranking   Approval                 0.109834
+1     Adversarial ranking  Condorcet                 0.126797
+2     Adversarial ranking        IRV                 0.137229
+3     Adversarial ranking  Plurality                 0.106004
+4     Adversarial ranking      Score                 0.108461
+5   Aggressive compromise   Approval                 0.113504
+6   Aggressive compromise  Condorcet                 0.124233
+7   Aggressive compromise        IRV                 0.130033
+8   Aggressive compromise  Plurality                 0.120586
+9   Aggressive compromise      Score                 0.111877
+10   Defensive compromise   Approval                 0.113891
+11   Defensive compromise  Condorcet                 0.103891
+12   Defensive compromise        IRV                 0.114519
+13   Defensive compromise  Plurality                 0.108972
+14   Defensive compromise      Score                 0.113848
+15                Sincere   Approval                 0.116366
+16                Sincere  Condorcet                 0.097936
+17                Sincere        IRV                 0.109595
+18                Sincere  Plurality                 0.122868
+19                Sincere      Score                 0.099795
+
+    mean\_aggregate\_delta  mean\_minority\_delta
+0              -0.017659            -0.046019
+1              -0.011091            -0.048778
+2               0.008589            -0.059063
+3              -0.013116            -0.022876
+4              -0.017313            -0.047330
+5              -0.015678            -0.032285
+6              -0.008558            -0.014603
+7              -0.008981            -0.003801
+8              -0.016228            -0.035410
+9              -0.015625            -0.036978
+10             -0.014916            -0.035059
+11             -0.007089            -0.013211
+12             -0.007970            -0.023245
+13             -0.013444            -0.024623
+14             -0.014028            -0.037254
+15             -0.010902            -0.018416
+16             -0.014952            -0.035328
+17             -0.012432            -0.024837
+18             -0.007185            -0.020354
+19             -0.015403            -0.037871
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{34}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{fig}\PY{p}{,} \PY{n}{axes} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{14}\PY{p}{,} \PY{l+m+mi}{5}\PY{p}{)}\PY{p}{,} \PY{n}{dpi}\PY{o}{=}\PY{l+m+mi}{150}\PY{p}{)}
+\PY{n}{strategy\PYZus{}agg} \PY{o}{=} \PY{n}{strategy\PYZus{}summary}\PY{o}{.}\PY{n}{pivot}\PY{p}{(}\PY{n}{index}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{strategy}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{columns}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{system}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{values}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean\PYZus{}aggregate\PYZus{}delta}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{STRATEGY\PYZus{}ORDER}\PY{p}{,} \PY{n}{SYSTEM\PYZus{}ORDER}\PY{p}{]}
+\PY{n}{strategy\PYZus{}min} \PY{o}{=} \PY{n}{strategy\PYZus{}summary}\PY{o}{.}\PY{n}{pivot}\PY{p}{(}\PY{n}{index}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{strategy}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{columns}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{system}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{values}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean\PYZus{}minority\PYZus{}delta}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{STRATEGY\PYZus{}ORDER}\PY{p}{,} \PY{n}{SYSTEM\PYZus{}ORDER}\PY{p}{]}
+
+\PY{n}{sns}\PY{o}{.}\PY{n}{heatmap}\PY{p}{(}\PY{n}{strategy\PYZus{}agg}\PY{p}{,} \PY{n}{annot}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{fmt}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{.3f}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{cmap}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{RdBu\PYZus{}r}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{center}\PY{o}{=}\PY{l+m+mf}{0.0}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}
+\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Aggregate\PYZhy{}welfare delta by strategy}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{System}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Strategy}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{n}{sns}\PY{o}{.}\PY{n}{heatmap}\PY{p}{(}\PY{n}{strategy\PYZus{}min}\PY{p}{,} \PY{n}{annot}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{fmt}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{.3f}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{cmap}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{RdBu\PYZus{}r}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{center}\PY{o}{=}\PY{l+m+mf}{0.0}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
+\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Minority\PYZhy{}welfare delta by strategy}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{System}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Strategy}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+
+\PY{n}{fig}\PY{o}{.}\PY{n}{tight\PYZus{}layout}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{party_primaries_turnout_strategy_space_files/party_primaries_turnout_strategy_space_28_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{Every system against
+plurality}\label{every-system-against-plurality}
+
+Plurality is the baseline, so every other system is compared to
+plurality within the same sampled case. Positive values mean the system
+is doing better than plurality on that metric.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{35}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{plurality\PYZus{}df} \PY{o}{=} \PY{n}{plurality\PYZus{}comparison\PYZus{}table}\PY{p}{(}\PY{n}{results\PYZus{}df}\PY{p}{)}
+\PY{n}{plurality\PYZus{}summary} \PY{o}{=} \PY{p}{(}
+    \PY{n}{plurality\PYZus{}df}\PY{o}{.}\PY{n}{groupby}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{system}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{as\PYZus{}index}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+    \PY{o}{.}\PY{n}{agg}\PY{p}{(}
+        \PY{n}{mean\PYZus{}distance\PYZus{}gain\PYZus{}vs\PYZus{}plurality}\PY{o}{=}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{distance\PYZus{}gain\PYZus{}vs\PYZus{}plurality}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{,}
+        \PY{n}{mean\PYZus{}aggregate\PYZus{}gain\PYZus{}vs\PYZus{}plurality}\PY{o}{=}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{aggregate\PYZus{}gain\PYZus{}vs\PYZus{}plurality}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{,}
+        \PY{n}{mean\PYZus{}minority\PYZus{}gain\PYZus{}vs\PYZus{}plurality}\PY{o}{=}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{minority\PYZus{}gain\PYZus{}vs\PYZus{}plurality}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{,}
+    \PY{p}{)}
+    \PY{o}{.}\PY{n}{sort\PYZus{}values}\PY{p}{(}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean\PYZus{}distance\PYZus{}gain\PYZus{}vs\PYZus{}plurality}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean\PYZus{}minority\PYZus{}gain\PYZus{}vs\PYZus{}plurality}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{,} \PY{n}{ascending}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}
+    \PY{o}{.}\PY{n}{reset\PYZus{}index}\PY{p}{(}\PY{n}{drop}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{p}{)}
+\PY{n}{plurality\PYZus{}summary}
+\end{Verbatim}
+\end{tcolorbox}
+
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{35}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+      system  mean\_distance\_gain\_vs\_plurality  \textbackslash{}
+0      Score                         0.006112
+1  Condorcet                         0.001393
+2   Approval                         0.001209
+3  Plurality                         0.000000
+4        IRV                        -0.008236
+
+   mean\_aggregate\_gain\_vs\_plurality  mean\_minority\_gain\_vs\_plurality
+0                          0.002326                         0.016473
+1                          0.000510                         0.003413
+2                          0.000243                         0.013876
+3                          0.000000                         0.000000
+4                         -0.002574                         0.003367
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{36}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{fig}\PY{p}{,} \PY{n}{axes} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{2}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{14}\PY{p}{,} \PY{l+m+mf}{4.5}\PY{p}{)}\PY{p}{,} \PY{n}{dpi}\PY{o}{=}\PY{l+m+mi}{150}\PY{p}{)}
+
+\PY{n}{sns}\PY{o}{.}\PY{n}{barplot}\PY{p}{(}\PY{n}{data}\PY{o}{=}\PY{n}{plurality\PYZus{}summary}\PY{p}{,} \PY{n}{x}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{system}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{y}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean\PYZus{}distance\PYZus{}gain\PYZus{}vs\PYZus{}plurality}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZsh{}457b9d}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{axhline}\PY{p}{(}\PY{l+m+mf}{0.0}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{black}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{linewidth}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Distance gain relative to plurality}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{tick\PYZus{}params}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{x}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{rotation}\PY{o}{=}\PY{l+m+mi}{35}\PY{p}{)}
+
+\PY{n}{sns}\PY{o}{.}\PY{n}{barplot}\PY{p}{(}\PY{n}{data}\PY{o}{=}\PY{n}{plurality\PYZus{}summary}\PY{p}{,} \PY{n}{x}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{system}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{y}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{mean\PYZus{}minority\PYZus{}gain\PYZus{}vs\PYZus{}plurality}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZsh{}e76f51}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{axhline}\PY{p}{(}\PY{l+m+mf}{0.0}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{black}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{linewidth}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Minority\PYZhy{}welfare gain relative to plurality}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{tick\PYZus{}params}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{x}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{rotation}\PY{o}{=}\PY{l+m+mi}{35}\PY{p}{)}
+
+\PY{n}{fig}\PY{o}{.}\PY{n}{tight\PYZus{}layout}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{party_primaries_turnout_strategy_space_files/party_primaries_turnout_strategy_space_31_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\subsection{How regressions like this are used in social
+science}\label{how-regressions-like-this-are-used-in-social-science}
+
+The summary tables above are good for broad comparisons, but they do not
+tell us which ingredients matter most once several political forces move
+together. In social science, a common next step is to fit a regression
+model that summarizes average associations while adjusting for the other
+observed variables in the dataset.
+
+In the most general linear form used here, observation \(i\) is written
+as
+
+\[
+Y_i = \alpha + \sum_g X_{ig} \beta_g + \sum_h Z_{ih} \gamma_h + \varepsilon_i,
+\]
+
+where the \(X\) terms are main effects, transformed continuous
+covariates, and the \(Z\) terms are selected interaction blocks. The
+model is still descriptive rather than causal, but it is less
+restrictive than the earlier purely additive version because it allows
+some effects to depend on context.
+
+The notebook uses three continuous quantities in a richer way than
+before:
+
+\begin{itemize}
+\tightlist
+\item
+  minority share,
+\item
+  turnout intensity,
+\item
+  strategy intensity.
+\end{itemize}
+
+Each one is centered, scaled, and entered both linearly and
+quadratically. So the model is allowed to represent curved relationships
+such as ``harm rises sharply once the minority becomes very small''
+instead of forcing everything onto a straight line.
+
+It also adds a small set of politically motivated interaction terms
+rather than every possible pairwise combination. The interactions
+included here are:
+
+\begin{itemize}
+\tightlist
+\item
+  electorate \(\times\) primary,
+\item
+  electorate \(\times\) system,
+\item
+  primary \(\times\) system,
+\item
+  turnout profile \(\times\) primary,
+\item
+  turnout profile \(\times\) system,
+\item
+  strategy profile \(\times\) system,
+\item
+  minority share \(\times\) primary,
+\item
+  minority share \(\times\) system,
+\item
+  turnout intensity \(\times\) turnout profile,
+\item
+  strategy intensity \(\times\) strategy profile.
+\end{itemize}
+
+The notebook looks at four outcomes:
+
+\begin{itemize}
+\tightlist
+\item
+  overall welfare, \(W_{\mathrm{agg}}\),
+\item
+  majority welfare, \(W_{\mathrm{maj}}\),
+\item
+  minority welfare, \(W_{\mathrm{min}}\),
+\item
+  the welfare gap, \(W_{\mathrm{maj}} - W_{\mathrm{min}}\).
+\end{itemize}
+
+To summarize importance, the notebook still asks how much fit falls when
+one term family is removed and the model is refit:
+
+\[
+I_g = R^2_{\mathrm{full}} - R^2_{-g}.
+\]
+
+A larger \(I_g\) means that term family is doing more explanatory work
+inside this richer model. For the heatmap below, those drops are
+normalized within each outcome,
+
+\[
+S_g = \frac{I_g}{\sum_h I_h},
+\]
+
+so each column can be read as a relative-importance decomposition of the
+explained signal for that outcome. That makes it easier to compare
+patterns across the four metrics at once.
+
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{37}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{results\PYZus{}df} \PY{o}{=} \PY{n}{results\PYZus{}df}\PY{o}{.}\PY{n}{copy}\PY{p}{(}\PY{p}{)}
+\PY{n}{results\PYZus{}df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{majority\PYZus{}minus\PYZus{}minority\PYZus{}welfare}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{=} \PY{p}{(}
+    \PY{n}{results\PYZus{}df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{majority\PYZus{}group\PYZus{}welfare}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]} \PY{o}{\PYZhy{}} \PY{n}{results\PYZus{}df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{minority\PYZus{}group\PYZus{}welfare}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}
+\PY{p}{)}
+
+\PY{n}{regression\PYZus{}targets} \PY{o}{=} \PY{p}{[}
+    \PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{aggregate\PYZus{}welfare}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Overall welfare}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{,}
+    \PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{majority\PYZus{}group\PYZus{}welfare}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Majority welfare}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{,}
+    \PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{minority\PYZus{}group\PYZus{}welfare}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Minority welfare}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{,}
+    \PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{majority\PYZus{}minus\PYZus{}minority\PYZus{}welfare}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Majority minus minority welfare}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}\PY{p}{,}
+\PY{p}{]}
+
+\PY{n}{regression\PYZus{}frames} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+\PY{n}{regression\PYZus{}fit\PYZus{}summary} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+\PY{k}{for} \PY{n}{target\PYZus{}col}\PY{p}{,} \PY{n}{label} \PY{o+ow}{in} \PY{n}{regression\PYZus{}targets}\PY{p}{:}
+    \PY{n}{importance\PYZus{}df} \PY{o}{=} \PY{n}{grouped\PYZus{}regression\PYZus{}importance}\PY{p}{(}\PY{n}{results\PYZus{}df}\PY{p}{,} \PY{n}{target\PYZus{}col}\PY{o}{=}\PY{n}{target\PYZus{}col}\PY{p}{)}\PY{o}{.}\PY{n}{assign}\PY{p}{(}\PY{n}{outcome}\PY{o}{=}\PY{n}{label}\PY{p}{)}
+    \PY{n}{regression\PYZus{}frames}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{importance\PYZus{}df}\PY{p}{)}
+    \PY{n}{regression\PYZus{}fit\PYZus{}summary}\PY{o}{.}\PY{n}{append}\PY{p}{(}
+        \PY{p}{\PYZob{}}
+            \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{outcome}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n}{label}\PY{p}{,}
+            \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{full\PYZus{}r2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{n+nb}{float}\PY{p}{(}\PY{n}{importance\PYZus{}df}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{full\PYZus{}r2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{o}{.}\PY{n}{iloc}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}\PY{p}{,}
+        \PY{p}{\PYZcb{}}
+    \PY{p}{)}
+
+\PY{n}{regression\PYZus{}importance\PYZus{}df} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{concat}\PY{p}{(}\PY{n}{regression\PYZus{}frames}\PY{p}{,} \PY{n}{ignore\PYZus{}index}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
+\PY{n}{regression\PYZus{}fit\PYZus{}summary} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{DataFrame}\PY{p}{(}\PY{n}{regression\PYZus{}fit\PYZus{}summary}\PY{p}{)}
+
+\PY{n}{display}\PY{p}{(}\PY{n}{regression\PYZus{}fit\PYZus{}summary}\PY{p}{)}
+\PY{n}{regression\PYZus{}importance\PYZus{}df}\PY{p}{[}\PY{p}{[}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{outcome}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{term\PYZus{}family}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{r2\PYZus{}drop}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{importance\PYZus{}share}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{full\PYZus{}r2}\PY{l+s+s2}{\PYZdq{}}\PY{p}{]}\PY{p}{]}
+\end{Verbatim}
+\end{tcolorbox}
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+                           outcome   full\_r2
+0                  Overall welfare  0.796275
+1                 Majority welfare  0.583271
+2                 Minority welfare  0.755557
+3  Majority minus minority welfare  0.636722
+    \end{Verbatim}
+
+    
+            \begin{tcolorbox}[breakable, size=fbox, boxrule=.5pt, pad at break*=1mm, opacityfill=0]
+\prompt{Out}{outcolor}{37}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+                            outcome                            term\_family  \textbackslash{}
+0                   Overall welfare              turnout profile × primary
+1                   Overall welfare    turnout intensity × turnout profile
+2                   Overall welfare                       primary × system
+3                   Overall welfare                   electorate × primary
+4                   Overall welfare                         minority share
+5                   Overall welfare              strategy profile × system
+6                   Overall welfare                        candidate slate
+7                   Overall welfare                    electorate × system
+8                   Overall welfare                      turnout intensity
+9                   Overall welfare  strategy intensity × strategy profile
+10                  Overall welfare               turnout profile × system
+11                  Overall welfare               minority share × primary
+12                  Overall welfare                minority share × system
+13                  Overall welfare                     strategy intensity
+14                  Overall welfare                                primary
+15                  Overall welfare                       strategy profile
+16                  Overall welfare                        turnout profile
+17                  Overall welfare                                 system
+18                  Overall welfare                             electorate
+19                 Majority welfare                   electorate × primary
+20                 Majority welfare              turnout profile × primary
+21                 Majority welfare              strategy profile × system
+22                 Majority welfare                       primary × system
+23                 Majority welfare                    electorate × system
+24                 Majority welfare    turnout intensity × turnout profile
+25                 Majority welfare               turnout profile × system
+26                 Majority welfare  strategy intensity × strategy profile
+27                 Majority welfare                      turnout intensity
+28                 Majority welfare               minority share × primary
+29                 Majority welfare                         minority share
+30                 Majority welfare                     strategy intensity
+31                 Majority welfare                minority share × system
+32                 Majority welfare                        candidate slate
+33                 Majority welfare                                primary
+34                 Majority welfare                       strategy profile
+35                 Majority welfare                        turnout profile
+36                 Majority welfare                                 system
+37                 Majority welfare                             electorate
+38                 Minority welfare              turnout profile × primary
+39                 Minority welfare                   electorate × primary
+40                 Minority welfare              strategy profile × system
+41                 Minority welfare    turnout intensity × turnout profile
+42                 Minority welfare                    electorate × system
+43                 Minority welfare  strategy intensity × strategy profile
+44                 Minority welfare                       primary × system
+45                 Minority welfare                        candidate slate
+46                 Minority welfare               minority share × primary
+47                 Minority welfare               turnout profile × system
+48                 Minority welfare                         minority share
+49                 Minority welfare                      turnout intensity
+50                 Minority welfare                minority share × system
+51                 Minority welfare                     strategy intensity
+52                 Minority welfare                                primary
+53                 Minority welfare                       strategy profile
+54                 Minority welfare                        turnout profile
+55                 Minority welfare                                 system
+56                 Minority welfare                             electorate
+57  Majority minus minority welfare                   electorate × primary
+58  Majority minus minority welfare              strategy profile × system
+59  Majority minus minority welfare                    electorate × system
+60  Majority minus minority welfare              turnout profile × primary
+61  Majority minus minority welfare                       primary × system
+62  Majority minus minority welfare  strategy intensity × strategy profile
+63  Majority minus minority welfare               turnout profile × system
+64  Majority minus minority welfare               minority share × primary
+65  Majority minus minority welfare                         minority share
+66  Majority minus minority welfare    turnout intensity × turnout profile
+67  Majority minus minority welfare                        candidate slate
+68  Majority minus minority welfare                      turnout intensity
+69  Majority minus minority welfare                minority share × system
+70  Majority minus minority welfare                     strategy intensity
+71  Majority minus minority welfare                                primary
+72  Majority minus minority welfare                       strategy profile
+73  Majority minus minority welfare                        turnout profile
+74  Majority minus minority welfare                                 system
+75  Majority minus minority welfare                             electorate
+
+     r2\_drop  importance\_share   full\_r2
+0   0.023710          0.530909  0.796275
+1   0.008426          0.188682  0.796275
+2   0.002691          0.060259  0.796275
+3   0.002492          0.055795  0.796275
+4   0.002058          0.046077  0.796275
+5   0.002027          0.045383  0.796275
+6   0.001130          0.025294  0.796275
+7   0.000779          0.017440  0.796275
+8   0.000534          0.011949  0.796275
+9   0.000285          0.006381  0.796275
+10  0.000244          0.005457  0.796275
+11  0.000162          0.003637  0.796275
+12  0.000067          0.001498  0.796275
+13  0.000055          0.001238  0.796275
+14  0.000000          0.000000  0.796275
+15  0.000000          0.000000  0.796275
+16  0.000000          0.000000  0.796275
+17  0.000000          0.000000  0.796275
+18  0.000000          0.000000  0.796275
+19  0.013502          0.283028  0.583271
+20  0.010880          0.228066  0.583271
+21  0.008372          0.175479  0.583271
+22  0.004451          0.093290  0.583271
+23  0.003423          0.071745  0.583271
+24  0.002540          0.053239  0.583271
+25  0.001318          0.027621  0.583271
+26  0.000742          0.015554  0.583271
+27  0.000722          0.015126  0.583271
+28  0.000661          0.013853  0.583271
+29  0.000644          0.013501  0.583271
+30  0.000194          0.004074  0.583271
+31  0.000133          0.002789  0.583271
+32  0.000126          0.002637  0.583271
+33  0.000000          0.000000  0.583271
+34  0.000000          0.000000  0.583271
+35  0.000000          0.000000  0.583271
+36  0.000000          0.000000  0.583271
+37  0.000000          0.000000  0.583271
+38  0.012642          0.336681  0.755557
+39  0.010290          0.274058  0.755557
+40  0.003270          0.087089  0.755557
+41  0.002976          0.079250  0.755557
+42  0.002743          0.073054  0.755557
+43  0.001186          0.031595  0.755557
+44  0.001089          0.029005  0.755557
+45  0.001072          0.028542  0.755557
+46  0.000878          0.023381  0.755557
+47  0.000809          0.021558  0.755557
+48  0.000404          0.010754  0.755557
+49  0.000128          0.003419  0.755557
+50  0.000039          0.001049  0.755557
+51  0.000021          0.000564  0.755557
+52  0.000000          0.000000  0.755557
+53  0.000000          0.000000  0.755557
+54  0.000000          0.000000  0.755557
+55  0.000000          0.000000  0.755557
+56  0.000000          0.000000  0.755557
+57  0.014919          0.403450  0.636722
+58  0.006264          0.169402  0.636722
+59  0.004001          0.108202  0.636722
+60  0.003947          0.106752  0.636722
+61  0.001626          0.043971  0.636722
+62  0.001445          0.039065  0.636722
+63  0.001328          0.035913  0.636722
+64  0.001166          0.031519  0.636722
+65  0.000707          0.019108  0.636722
+66  0.000617          0.016699  0.636722
+67  0.000452          0.012219  0.636722
+68  0.000411          0.011119  0.636722
+69  0.000090          0.002446  0.636722
+70  0.000005          0.000135  0.636722
+71  0.000000          0.000000  0.636722
+72  0.000000          0.000000  0.636722
+73  0.000000          0.000000  0.636722
+74  0.000000          0.000000  0.636722
+75  0.000000          0.000000  0.636722
+\end{Verbatim}
+\end{tcolorbox}
+        
+    \begin{tcolorbox}[breakable, size=fbox, boxrule=1pt, pad at break*=1mm,colback=cellbackground, colframe=cellborder]
+\prompt{In}{incolor}{38}{\boxspacing}
+\begin{Verbatim}[commandchars=\\\{\}]
+\PY{n}{importance\PYZus{}heatmap} \PY{o}{=} \PY{p}{(}
+    \PY{n}{regression\PYZus{}importance\PYZus{}df}
+    \PY{o}{.}\PY{n}{pivot}\PY{p}{(}\PY{n}{index}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{term\PYZus{}family}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{columns}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{outcome}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,} \PY{n}{values}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{importance\PYZus{}share}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+    \PY{o}{.}\PY{n}{fillna}\PY{p}{(}\PY{l+m+mf}{0.0}\PY{p}{)}
+\PY{p}{)}
+\PY{n}{importance\PYZus{}heatmap} \PY{o}{=} \PY{n}{importance\PYZus{}heatmap}\PY{o}{.}\PY{n}{loc}\PY{p}{[}
+    \PY{n}{importance\PYZus{}heatmap}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{axis}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}\PY{o}{.}\PY{n}{sort\PYZus{}values}\PY{p}{(}\PY{n}{ascending}\PY{o}{=}\PY{k+kc}{False}\PY{p}{)}\PY{o}{.}\PY{n}{index}\PY{p}{,}
+    \PY{p}{[}\PY{n}{label} \PY{k}{for} \PY{n}{\PYZus{}}\PY{p}{,} \PY{n}{label} \PY{o+ow}{in} \PY{n}{regression\PYZus{}targets}\PY{p}{]}\PY{p}{,}
+\PY{p}{]}
+
+\PY{n}{fig}\PY{p}{,} \PY{n}{ax} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{11}\PY{p}{,} \PY{l+m+mi}{8}\PY{p}{)}\PY{p}{,} \PY{n}{dpi}\PY{o}{=}\PY{l+m+mi}{150}\PY{p}{)}
+\PY{n}{sns}\PY{o}{.}\PY{n}{heatmap}\PY{p}{(}
+    \PY{n}{importance\PYZus{}heatmap}\PY{p}{,}
+    \PY{n}{annot}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,}
+    \PY{n}{fmt}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{.2f}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{n}{cmap}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{YlOrRd}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
+    \PY{n}{linewidths}\PY{o}{=}\PY{l+m+mf}{0.5}\PY{p}{,}
+    \PY{n}{ax}\PY{o}{=}\PY{n}{ax}\PY{p}{,}
+    \PY{n}{cbar\PYZus{}kws}\PY{o}{=}\PY{p}{\PYZob{}}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{label}\PY{l+s+s2}{\PYZdq{}}\PY{p}{:} \PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Share of importance within outcome}\PY{l+s+s2}{\PYZdq{}}\PY{p}{\PYZcb{}}\PY{p}{,}
+\PY{p}{)}
+\PY{n}{ax}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Relative importance of term families across outcomes}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{ax}\PY{o}{.}\PY{n}{set\PYZus{}xlabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{ax}\PY{o}{.}\PY{n}{set\PYZus{}ylabel}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\PY{n}{fig}\PY{o}{.}\PY{n}{tight\PYZus{}layout}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+\end{tcolorbox}
+
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{party_primaries_turnout_strategy_space_files/party_primaries_turnout_strategy_space_34_0.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \subsubsection{Conclusion}\label{conclusion}
+
+A few broad patterns stand out once the notebook is averaged over
+\texttt{1000} sampled cases. First, primaries are not just a neutral
+first step. Relative to each system's own matched no-primary baseline,
+almost every primary pipeline reduces overall welfare on average, and
+minority welfare usually falls even more. The broad political message is
+simple: filtering the field before the general election often does real
+damage, even when the final election rule stays the same.
+
+Second, the kind of primary matters more than the final election rule in
+many of these comparisons. \texttt{Top-4\ open} is clearly the least
+damaging pipeline in the notebook. Its aggregate and minority-welfare
+deltas stay much closer to zero than the closed pipelines, and for
+minority welfare it is the only pipeline that occasionally turns
+positive on average, as in \texttt{Top-4\ open\ +\ Condorcet} and
+\texttt{Top-4\ open\ +\ IRV}. By contrast, the closed pipelines are much
+harsher, especially for minority voters. The worst minority average in
+the notebook comes from \texttt{Closed\ plurality\ +\ Score}, and
+several other closed combinations are not far behind. For a lay reader,
+that points to an intuitive lesson: broadening who reaches the general
+election can matter more than changing how the final round is counted.
+
+Third, different comparisons reward different systems. If the question
+is which rule keeps the most value relative to its own no-primary
+baseline, \texttt{IRV} looks surprisingly resilient on aggregate
+welfare, with the smallest average aggregate loss among the five
+systems. But if the question is which rule outperforms plurality inside
+the same sampled setting, \texttt{Score} is the clearest winner: it has
+the best average distance-to-median improvement, the best
+aggregate-welfare gain over plurality, and the largest minority-welfare
+gain over plurality. \texttt{Approval} also modestly improves on
+plurality, while \texttt{IRV} actually does worse than plurality on
+average distance and aggregate welfare in that direct comparison. So the
+notebook does not end with one universal champion. It ends with a more
+interesting point: whether a system looks good depends on what baseline
+is being used.
+
+Finally, the regression summaries make the broader pattern hard to miss.
+For all four outcomes, the electorate family is by far the strongest
+explanatory feature. After that, turnout profile and the primary
+pipeline matter much more than the final system label. In other words,
+these simulations suggest that arguments about voting rules are only
+part of the story. Who the voters are, how the electorate is structured,
+and how parties and primaries narrow the field appear to matter even
+more for whether majorities and minorities are well served.
+
+    
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+\end{document}

@@ -29,6 +29,7 @@ These notebooks are less about re-deriving textbook results and more about using
 |---|---|
 | `plurality_vs_irv_strategic_comparison.ipynb` | Compares closed-primary plurality against alternative primary and general-election pipelines under different strategy assumptions |
 | `fractional_reporting_robustness.ipynb` | Examines how the fractional system behaves under honest, noisy, biased, and adversarial spatial reporting, with plurality as a reference point |
+| `majority_vs_minority_welfare.ipynb` | Studies how parties, primaries, turnout, and strategy shape overall, majority, and minority welfare across a broad sampled design |
 | `primaries_moderation_backfire.ipynb` | Studies when primaries pull nominees toward the electorate's center and when they instead make outcomes less moderate |
 
 ## Notes

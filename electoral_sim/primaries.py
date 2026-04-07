@@ -36,6 +36,11 @@ from typing import Callable
 from electoral_sim.electorate import Electorate
 from electoral_sim.candidates import CandidateSet, fixed_candidates
 from electoral_sim.ballots import BallotProfile
+from electoral_sim.parties import (
+    PartySet,
+    assign_candidates_to_parties,
+    nearest_party_distances,
+)
 from electoral_sim.systems import ElectoralSystem, Plurality
 from electoral_sim.metrics import ElectionMetrics, compute_metrics
 from electoral_sim.types import ElectionResult
@@ -215,6 +220,8 @@ def assign_party_membership(
     candidates: CandidateSet,
     parties: list[PartySpec],
     primary_type: PrimaryType = PrimaryType.CLOSED,
+    party_positions: PartySet | None = None,
+    semi_open_tolerance: float = 0.10,
 ) -> dict[str, np.ndarray]:
     """
     Assign each voter to a party based on which party's candidates are nearest.
@@ -223,23 +230,48 @@ def assign_party_membership(
     -------
     dict mapping party_name -> boolean mask of shape (n_voters,)
     """
+    memberships = {}
+
+    if party_positions is not None:
+        expected_labels = [party.name for party in parties]
+        if party_positions.labels != expected_labels:
+            raise ValueError(
+                "party_positions labels must match PartySpec names in the same order."
+            )
+        party_dists = nearest_party_distances(electorate.preferences, party_positions)
+        nearest_party = party_dists.argmin(axis=1)
+
+        if primary_type == PrimaryType.CLOSED:
+            for idx, party in enumerate(parties):
+                memberships[party.name] = nearest_party == idx
+            return memberships
+
+        if primary_type == PrimaryType.OPEN:
+            for party in parties:
+                memberships[party.name] = np.ones(electorate.n_voters, dtype=bool)
+            return memberships
+
+        if primary_type == PrimaryType.SEMI:
+            for idx, party in enumerate(parties):
+                own_dist = party_dists[:, idx]
+                other_cols = [j for j in range(len(parties)) if j != idx]
+                other_dist = party_dists[:, other_cols].min(axis=1)
+                memberships[party.name] = own_dist <= other_dist * (1.0 + semi_open_tolerance)
+            return memberships
+
+        raise ValueError(f"Unsupported primary_type: {primary_type}")
+
     from scipy.spatial.distance import cdist
 
-    dists = cdist(electorate.preferences, candidates.positions)  # (n_voters, n_cands)
+    dists = cdist(electorate.preferences, candidates.positions)
+    nearest_cand = dists.argmin(axis=1)
 
-    # For each voter, find their nearest candidate overall
-    nearest_cand = dists.argmin(axis=1)  # (n_voters,)
-
-    # Build a map: candidate_index -> party_name
     cand_to_party = {}
     for party in parties:
         for idx in party.candidate_indices:
             cand_to_party[idx] = party.name
 
-    memberships = {}
-
     if primary_type == PrimaryType.CLOSED:
-        # Voter belongs to party whose candidate is nearest
         for party in parties:
             mask = np.array([
                 cand_to_party.get(nearest_cand[i]) == party.name
@@ -248,12 +280,10 @@ def assign_party_membership(
             memberships[party.name] = mask
 
     elif primary_type == PrimaryType.OPEN:
-        # All voters can vote in any primary (handled at call site)
         for party in parties:
             memberships[party.name] = np.ones(electorate.n_voters, dtype=bool)
 
     elif primary_type == PrimaryType.SEMI:
-        # Party members + voters who are "unaffiliated" (equidistant between parties)
         party_nearest_dists = {}
         for party in parties:
             party_cand_dists = dists[:, party.candidate_indices]
@@ -261,16 +291,64 @@ def assign_party_membership(
 
         party_names = [p.name for p in parties]
         for party in parties:
-            own_dist   = party_nearest_dists[party.name]
+            own_dist = party_nearest_dists[party.name]
             other_dist = np.min(
                 [party_nearest_dists[n] for n in party_names if n != party.name],
                 axis=0,
             )
-            # Member if own party is closer, or within 10% of the other party's distance
-            mask = own_dist <= other_dist * 1.10
-            memberships[party.name] = mask
+            memberships[party.name] = own_dist <= other_dist * (1.0 + semi_open_tolerance)
+    else:
+        raise ValueError(f"Unsupported primary_type: {primary_type}")
 
     return memberships
+
+
+def build_party_specs_from_positions(
+    candidates: CandidateSet,
+    party_positions: PartySet,
+    primary_systems: ElectoralSystem | dict[str, ElectoralSystem] | None = None,
+    candidate_party_indices: np.ndarray | None = None,
+) -> list[PartySpec]:
+    """
+    Build PartySpec objects by assigning candidates to their nearest party anchor.
+
+    This keeps existing ``PartySpec``-based APIs intact while making it possible
+    to define parties independently from candidate slates in notebooks.
+    """
+    if candidate_party_indices is None:
+        candidate_party_indices = assign_candidates_to_parties(candidates, party_positions)
+    else:
+        candidate_party_indices = np.asarray(candidate_party_indices, dtype=int)
+        if candidate_party_indices.shape != (candidates.n_candidates,):
+            raise ValueError(
+                "candidate_party_indices must have shape "
+                f"({candidates.n_candidates},)."
+            )
+
+    specs: list[PartySpec] = []
+    for party_idx, party_name in enumerate(party_positions.labels):
+        indices = np.flatnonzero(candidate_party_indices == party_idx).astype(int).tolist()
+        if not indices:
+            raise ValueError(
+                f"Party '{party_name}' has no assigned candidates. "
+                "Adjust party anchors, candidate positions, or explicit assignments."
+            )
+
+        if primary_systems is None:
+            primary_system = Plurality()
+        elif isinstance(primary_systems, dict):
+            primary_system = primary_systems.get(party_name, Plurality())
+        else:
+            primary_system = primary_systems
+
+        specs.append(
+            PartySpec(
+                name=party_name,
+                candidate_indices=indices,
+                primary_system=primary_system,
+            )
+        )
+    return specs
 
 
 def run_party_primary(

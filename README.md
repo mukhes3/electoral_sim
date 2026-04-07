@@ -85,7 +85,9 @@ for m in sorted(metrics, key=lambda x: x.distance_to_median):
 
 The repository includes a growing notebook collection covering quickstarts,
 social choice theory, and simulation-driven political questions. A guided index
-is available in `notebooks/README.md`.
+is available in `notebooks/README.md`, including experimental notebooks on
+topics like strategic voting, fractional-ballot robustness, primary dynamics,
+and majority-versus-minority welfare.
 
 
 ## CLI Runner
