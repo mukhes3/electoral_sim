@@ -4,7 +4,7 @@ A spatial voting simulator for comparing electoral systems under real-world-grou
 
 Voter and candidate preferences are represented as vectors in `[0,1]^N`. The primary metric the simulator uses to judge how close each electoral system's outcome is to the **geometric median** of voter preferences — the central tendency most robust to outliers, although there are other metrics also available to use. 
 
-The simulation framework as well as some experimental results can be found in the [Arxiv Preprint](https://arxiv.org/abs/2603.08752).
+The simulation framework as well as some experimental results can be found in the [Arxiv Preprint](https://arxiv.org/abs/2603.08752). Some of the results related to polarization dynamics developed using this repo can be found in [Arxiv Preprint](https://arxiv.org/abs/2604.19985).
 
 
 ---
@@ -452,5 +452,15 @@ If you use this package in your research, please cite:
       archivePrefix={arXiv},
       primaryClass={cs.GT},
       url={https://arxiv.org/abs/2603.08752}, 
+}
+
+@misc{mukherjee2026geometriccomparisonselectoralrules,
+      title={Geometric Comparisons of Electoral Rules Under Feedback}, 
+      author={Sumit Mukherjee},
+      year={2026},
+      eprint={2604.19985},
+      archivePrefix={arXiv},
+      primaryClass={cs.GT},
+      url={https://arxiv.org/abs/2604.19985}, 
 }
 ```
