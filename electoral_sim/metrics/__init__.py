@@ -255,3 +255,8 @@ from electoral_sim.metrics.groups import (  # noqa: E402
     GroupOutcomeMetrics,
     compute_group_metrics,
 )
+from electoral_sim.metrics.policy import (  # noqa: E402
+    GroupPolicyMetrics,
+    PolicyMetricsSummary,
+    compute_policy_metrics,
+)
