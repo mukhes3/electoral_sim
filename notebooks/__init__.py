@@ -1,1 +1,1 @@
-"""Notebook-local helper package."""
+"""Notebook package namespace for helper imports."""

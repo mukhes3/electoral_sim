@@ -88,8 +88,8 @@ social choice theory, and simulation-driven political questions. A guided index
 is available in `notebooks/README.md`, including notebooks on topics like
 Arrow's theorem, the median voter theorem in higher dimensions, strategic
 voting, repeated-election polarization dynamics, primary dynamics, welfare
-tradeoffs between majorities and minorities, and the theory-facing electoral
-dynamics companion.
+tradeoffs between majorities and minorities, and the distinction between
+spatial representation and downstream policy consequences.
 
 
 ## CLI Runner
