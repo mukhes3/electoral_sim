@@ -1,0 +1,49 @@
+system,slate,family,mechanism,metric,mean,low,high,n_seeds
+Approval,Broad coverage,Asymmetric,Nearby,distance_delta,-0.03651931912401698,-0.050037760057396505,-0.022493215922200018,12
+Approval,Broad coverage,Asymmetric,Popular,distance_delta,0.14789061215414404,0.12876116462132733,0.1667272587839029,12
+Approval,Broad coverage,Asymmetric,Random,distance_delta,-0.011454217197719212,-0.05210104454396393,0.04654341278702675,12
+Approval,Broad coverage,Consensus,Nearby,distance_delta,0.0,0.0,0.0,12
+Approval,Broad coverage,Consensus,Popular,distance_delta,0.21154236956474004,0.18787136998068907,0.2378179424889555,12
+Approval,Broad coverage,Consensus,Random,distance_delta,0.0,0.0,0.0,12
+Approval,Broad coverage,Fragmented,Nearby,distance_delta,-0.00164236036606287,-0.008610026048901417,0.005591491800771782,12
+Approval,Broad coverage,Fragmented,Popular,distance_delta,-0.0022025569778710056,-0.012343724736570302,0.009453885139835782,12
+Approval,Broad coverage,Fragmented,Random,distance_delta,-0.0031758819243444436,-0.009673371202907184,0.003133637592758696,12
+Approval,Broad coverage,Polarized,Nearby,distance_delta,0.0020926041425698,0.0,0.0060972584149997545,12
+Approval,Broad coverage,Polarized,Popular,distance_delta,0.03584944601777703,0.02251360640785457,0.05047390356650665,12
+Approval,Broad coverage,Polarized,Random,distance_delta,-0.04737726065234352,-0.07325242641129387,-0.02144791350353266,12
+Approval,No central candidate,Asymmetric,Nearby,distance_delta,0.02994621145844559,0.011897683099735776,0.051832226502803815,12
+Approval,No central candidate,Asymmetric,Popular,distance_delta,0.14789061215414404,0.1291910241618147,0.16619672913204533,12
+Approval,No central candidate,Asymmetric,Random,distance_delta,0.09239041710921453,0.05966421409603682,0.1277692399281982,12
+Approval,No central candidate,Consensus,Nearby,distance_delta,0.005893834369733244,0.0014904243010646328,0.011449446210807016,12
+Approval,No central candidate,Consensus,Popular,distance_delta,0.06415554491570041,0.04015033885381916,0.08869493711871558,12
+Approval,No central candidate,Consensus,Random,distance_delta,0.0053511157560996135,0.001999932880206797,0.008885355758761523,12
+Approval,No central candidate,Fragmented,Nearby,distance_delta,-0.0010872006003742236,-0.00805653098527227,0.005155232113916788,12
+Approval,No central candidate,Fragmented,Popular,distance_delta,-0.0022025569778710056,-0.012514372427689458,0.009853020821298821,12
+Approval,No central candidate,Fragmented,Random,distance_delta,-0.00282797144134531,-0.008931280009679986,0.0028555532218592613,12
+Approval,No central candidate,Polarized,Nearby,distance_delta,0.00477514261639097,0.0,0.01156510380211932,12
+Approval,No central candidate,Polarized,Popular,distance_delta,0.03584944601777703,0.021987816969007628,0.05033825322029751,12
+Approval,No central candidate,Polarized,Random,distance_delta,0.011544803903415035,0.003691554714385515,0.02129375983569404,12
+Score,Broad coverage,Asymmetric,Nearby,distance_delta,0.0,0.0,0.0,12
+Score,Broad coverage,Asymmetric,Popular,distance_delta,0.1901217173288705,0.17261261049178395,0.20593448692187646,12
+Score,Broad coverage,Asymmetric,Random,distance_delta,0.0,0.0,0.0,12
+Score,Broad coverage,Consensus,Nearby,distance_delta,0.0,0.0,0.0,12
+Score,Broad coverage,Consensus,Popular,distance_delta,0.21154236956474004,0.1880270243565272,0.23692391754456352,12
+Score,Broad coverage,Consensus,Random,distance_delta,0.0,0.0,0.0,12
+Score,Broad coverage,Fragmented,Nearby,distance_delta,0.0,0.0,0.0,12
+Score,Broad coverage,Fragmented,Popular,distance_delta,0.06470997906891973,0.05829304856985532,0.07105493685918732,12
+Score,Broad coverage,Fragmented,Random,distance_delta,0.0,0.0,0.0,12
+Score,Broad coverage,Polarized,Nearby,distance_delta,0.0,0.0,0.0,12
+Score,Broad coverage,Polarized,Popular,distance_delta,0.12113265558141685,0.11384817310102524,0.1291496931042897,12
+Score,Broad coverage,Polarized,Random,distance_delta,0.0,0.0,0.0,12
+Score,No central candidate,Asymmetric,Nearby,distance_delta,0.0038572710477129232,0.0,0.010401748658906267,12
+Score,No central candidate,Asymmetric,Popular,distance_delta,0.14136271066678208,0.12246296770584042,0.159960563724578,12
+Score,No central candidate,Asymmetric,Random,distance_delta,0.05263358126976762,0.04584146975069934,0.059862874885008174,12
+Score,No central candidate,Consensus,Nearby,distance_delta,0.003596812700612236,0.0010056314564673183,0.00727737445142954,12
+Score,No central candidate,Consensus,Popular,distance_delta,0.06415554491570041,0.03928341863494699,0.08750440342999292,12
+Score,No central candidate,Consensus,Random,distance_delta,0.003828427394212514,0.0006636011008919134,0.007273681698932857,12
+Score,No central candidate,Fragmented,Nearby,distance_delta,0.006306556759114166,0.002063133846623806,0.01201646708863639,12
+Score,No central candidate,Fragmented,Popular,distance_delta,0.009893818071154645,0.00351954966342632,0.017951745070137005,12
+Score,No central candidate,Fragmented,Random,distance_delta,0.006219385753321065,0.002056692641576035,0.01125079244293707,12
+Score,No central candidate,Polarized,Nearby,distance_delta,0.009889841526343594,0.0019693760355885305,0.01887348980579905,12
+Score,No central candidate,Polarized,Popular,distance_delta,0.036830380133379394,0.02297465196493829,0.049884424019736875,12
+Score,No central candidate,Polarized,Random,distance_delta,0.01469979229173872,0.009362674040097116,0.020081327615031546,12

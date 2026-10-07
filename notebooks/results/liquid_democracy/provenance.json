@@ -1,0 +1,59 @@
+{
+  "data_source": "Synthetic Gaussian-mixture electorates clipped to [0,1]^2",
+  "config": {
+    "seeds": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "network_draws": 3,
+    "n_voters": 400,
+    "families": [
+      "Consensus",
+      "Polarized",
+      "Fragmented",
+      "Asymmetric"
+    ],
+    "slates": [
+      "Broad coverage",
+      "No central candidate"
+    ],
+    "delegation_fractions": [
+      0.0,
+      0.25,
+      0.5,
+      0.75,
+      1.0
+    ],
+    "approval_threshold": 0.25
+  },
+  "selected_fraction": 0.75,
+  "bootstrap_draws": 1000,
+  "bootstrap_seed": 904,
+  "uncertainty_unit": "seed block, after averaging network draws within scenario cells",
+  "scenario_weighting": "equal weights for each family/slate cell",
+  "python": "3.12.14",
+  "packages": {
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "scipy": "1.18.1",
+    "matplotlib": "3.11.2",
+    "seaborn": "0.13.2"
+  },
+  "helper": "notebooks\\helpers\\liquid_experiments.py",
+  "helper_sha256": "d16de2b1b85f2ffa9a00355fea2be4a3f3894fb2ed8ccc3a4f345c5f4fd8bc4d",
+  "rows": {
+    "direct": 672,
+    "liquid": 8640
+  },
+  "excluded_runs": 0
+}

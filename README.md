@@ -317,6 +317,72 @@ metrics = run_simulation(
 )
 ```
 
+## Liquid Democracy
+
+Liquid democracy is available in the Python API through `DelegationProfile`,
+`LiquidApprovalVoting`, and `LiquidScoreVoting`. Each participating voter has
+one unit of voting power and either casts a ballot directly or delegates their
+whole ballot to another voter. Delegation is transitive: if voter 0 delegates
+to voter 1 and voter 1 delegates to voter 2, voter 2's ballot carries all three
+units. Delegate choices are explicit; the model does not assume that delegates
+are more informed or select delegates automatically.
+
+```python
+import numpy as np
+from electoral_sim.ballots import BallotProfile
+from electoral_sim.candidates import fixed_candidates
+from electoral_sim.electorate import Electorate
+from electoral_sim.liquid import (
+    DelegationProfile, LiquidApprovalVoting, LiquidScoreVoting,
+)
+from electoral_sim.metrics import run_simulation
+
+electorate = Electorate(np.array([[0.0], [0.1], [1.0]]))
+candidates = fixed_candidates([[0.0], [1.0]], ["Left", "Right"])
+ballots = BallotProfile.from_preferences(electorate, candidates, 0.2)
+
+# Voter indices refer to ballot rows; -1 (or one's own index) means direct.
+delegation = DelegationProfile([1, 2, -1])
+resolution = delegation.resolve(ballots.active_voter_mask)
+print(resolution.effective_weights)  # [0, 0, 3]
+
+result = LiquidApprovalVoting(delegation).run(ballots, candidates)
+print(result.winner_indices)  # [1]: voter 2 casts all represented power
+print(result.metadata["approval_counts"])  # [0, 3]
+
+# Existing metrics still evaluate the outcome against true voter preferences.
+metrics = run_simulation(
+    electorate, candidates,
+    systems=[LiquidApprovalVoting(delegation), LiquidScoreVoting(delegation)],
+    approval_threshold=0.2,
+)
+```
+
+Delegation rules in this first implementation:
+
+- **Cycles:** each cycle member casts their own fallback ballot. An incoming
+  chain uses the ballot of the first cycle member it reaches. For `[1, 0, 1]`,
+  the effective weights are `[1, 2, 0]`.
+- **Abstention:** `active_voter_mask` determines participation, including
+  participation by delegation. Inactive voters supply no power and cannot
+  receive or forward it. An active voter's chain ending at an inactive voter
+  is unrepresented. Keep delegators active; delegating is not abstaining.
+- **Accounting:** represented plus unrepresented power equals the number of
+  active voters. Rates and mean scores use represented power as the denominator.
+  Elections with no represented power raise `ValueError`.
+- **Ties:** the lowest candidate index wins, matching ordinary approval and
+  score voting. With all voters voting directly, the corresponding tallies agree.
+- **Diagnostics:** results include requested delegates, resolved destinations,
+  effective weights, cycles, and participating/represented/unrepresented power
+  in `metadata`. A destination of `-1` means no represented ballot.
+
+Both rules use the final delegate's supplied approval or score ballot, including
+any strategy applied when generating that ballot. They return the elected
+candidate's actual position and work with `run_simulation` and group metrics.
+A profile is tied to the electorate's voter ordering and must be rebuilt when
+that ordering or its meaning changes. Liquid rules are opt-in and are not added
+to the default system suite or CLI because they require a delegation profile.
+
 ## Spatial Reporting Models
 
 The repository also includes practical reporting models for experiments where a

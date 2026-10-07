@@ -21,6 +21,7 @@ These notebooks use the spatial simulator to explain well-known ideas from votin
 | `electoral_dynamics_theory_companion.ipynb` | Follows repeated-election geometric quantities such as winner centrality, supporter alignment, and coverage, with simulation evidence that matches the theory-facing setup |
 | `median_voter_theorem_higher_dimensions.ipynb` | Introduces the median voter theorem in one dimension and shows how it weakens as competition moves into higher dimensions |
 | `vote_splitting_and_spoiler_effect.ipynb` | Explores spoiler dynamics and vote splitting across electoral systems |
+| `liquid_democracy.ipynb` | Explains delegation chains, weighted tallies, cycles, and abstention, then compares liquid voting with standard single-winner systems using paired comparisons across electorates and candidate slates |
 
 ## Experimental political simulations
 
